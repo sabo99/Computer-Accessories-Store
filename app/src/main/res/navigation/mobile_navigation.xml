@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.alvin.computeraccessoriesstore.ui.home.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_HomeFragment_to_HomeSecondFragment"
+            app:destination="@id/nav_home_second" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_home_second"
+        android:name="com.alvin.computeraccessoriesstore.ui.home.HomeSecondFragment"
+        android:label="@string/home_second"
+        tools:layout="@layout/fragment_home_second">
+        <action
+            android:id="@+id/action_HomeSecondFragment_to_HomeFragment"
+            app:destination="@id/nav_home" />
+
+        <argument
+            android:name="myArg"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_items"
+        android:name="com.alvin.computeraccessoriesstore.ui.items.ItemsFragment"
+        android:label="@string/menu_items"
+        tools:layout="@layout/fragment_items" />
+
+    <fragment
+        android:id="@+id/nav_items_detail"
+        android:name="com.alvin.computeraccessoriesstore.ui.items_detail.ItemsDetailFragment"
+        android:label="@string/menu_items_detail"
+        tools:layout="@layout/fragment_items_detail" />
+
+    <fragment
+        android:id="@+id/nav_cart"
+        android:name="com.alvin.computeraccessoriesstore.ui.cart.CartFragment"
+        android:label="@string/menu_cart"
+        tools:layout="@layout/fragment_cart" />
+
+    <fragment
+        android:id="@+id/nav_order"
+        android:name="com.alvin.computeraccessoriesstore.ui.view_order.OrderListFragment"
+        android:label="@string/menu_order"
+        tools:layout="@layout/fragment_order_list" />
+
+</navigation>

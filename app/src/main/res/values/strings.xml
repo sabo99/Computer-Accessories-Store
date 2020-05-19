@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Sabo Store</string>
+    <string-array name="gender">
+        <item><font color='#8B8284'>Gender</font></item>
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_items">Items Store</string>
+    <string name="menu_items_detail">Items Detail</string>
+    <string name="menu_cart">Cart</string>
+    <string name="menu_account">Account</string>
+    <string name="menu_signout">Sign out</string>
+    <string name="menu_order">View Order</string>
+
+    <string name="home_second">Home Second</string>
+    <string name="action_clear_cart">Clear Cart</string>
+</resources>
