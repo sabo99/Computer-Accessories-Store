@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.Manifest;
 import android.app.Activity;
@@ -19,6 +20,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -72,6 +74,7 @@ public class ProfileActivity extends AppCompatActivity {
     LinearLayout mainLayout;
     @BindView(R.id.shimmerLayout)
     ShimmerLayout shimmerLayout;
+
 
     @BindView(R.id.pbUploadImage)
     ProgressBar pbUploadImage;
@@ -309,8 +312,7 @@ public class ProfileActivity extends AppCompatActivity {
                         finish();
                     }).create().show();
 
-        }
-        else {
+        } else {
             View view = LayoutInflater.from(this).inflate(R.layout.layout_resetpassword, null);
 
             tvNotif = view.findViewById(R.id.tvNotif);

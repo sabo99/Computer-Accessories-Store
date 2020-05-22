@@ -43,6 +43,7 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -191,28 +192,6 @@ public class HomeActivity extends AppCompatActivity {
         countCartItem();
     }
 
-//    @Override
-//    public void onBackPressed() {
-//
-//        if (showExitDialog(false)) {
-//            super.onBackPressed();
-//        }
-//    }
-//
-//    private boolean showExitDialog(boolean check) {
-//        builder = new AlertDialog.Builder(this).setCancelable(false);
-//        builder.setMessage("Are you sure exit this application ?")
-//                .setPositiveButton("OK", (dialog1, which) -> {
-//                    dialog1.dismiss();
-//                    finish();
-//                })
-//                .setNegativeButton("CANCEL", (dialog1, which) -> {
-//                    dialog1.dismiss();
-//                }).create().show();
-//
-//        return check;
-//    }
-
     public void account(MenuItem item) {
         drawer.closeDrawers();
         startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
@@ -235,7 +214,9 @@ public class HomeActivity extends AppCompatActivity {
                     Common.selectedItems = null;
                     // Sign Out
                     firebaseAuth.signOut();
-                    startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+                    Intent i = new Intent(this, LoginActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(i);
                     finish();
                 });
         dialog = builder.create();
@@ -257,13 +238,14 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         EventBus.getDefault().unregister(this);
+        EventBus.getDefault().removeStickyEvent(StoreItemClick.class);
+        EventBus.getDefault().removeStickyEvent(ItemsDetailClick.class);
         super.onStop();
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onStoreItemSelected(StoreItemClick event){
         if (event.isSuccess()){
-            //Toast.makeText(this, event.getStoreModel().getName(), Toast.LENGTH_SHORT).show();
             navController.navigate(R.id.nav_items);
         }
     }
@@ -324,7 +306,4 @@ public class HomeActivity extends AppCompatActivity {
         else
             fab.show();
     }
-
-
-
 }

@@ -22,7 +22,7 @@
                 android:id="@+id/imgCart"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:scaleType="fitXY"/>
+                android:scaleType="fitCenter"/>
 
             <LinearLayout
                 android:orientation="vertical"

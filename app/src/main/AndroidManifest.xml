@@ -15,7 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".SplashActivity" android:theme="@style/Splash">
+        <activity
+            android:name=".SplashActivity"
+            android:theme="@style/Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,7 +31,6 @@
         <activity
             android:name=".ProfileActivity"
             android:label="Profile"
-            android:launchMode="singleInstance"
             android:parentActivityName=".HomeActivity" />
         <activity
             android:name=".RegisterActivity"
