@@ -238,15 +238,19 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
     }
 
     private void showDialogClearCart() {
+        AlertDialog alertDialog;
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext()).setCancelable(false);
         builder.setTitle("Clear All Cart")
                 .setMessage("Are you sure clear all cart?")
-                .setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss())
-                .setPositiveButton("OK", (dialog, which) -> {
+                .setNegativeButton("NO", (dialog, which) -> dialog.dismiss())
+                .setPositiveButton("YES", (dialog, which) -> {
                     dialog.dismiss();
                     clearCart();
-                })
-                .create().show();
+                });
+        alertDialog = builder.create();
+        alertDialog.show();
+        Button positif = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        positif.setTextColor(Color.RED);
     }
 
     private void clearCart() {

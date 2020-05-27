@@ -70,25 +70,26 @@
         android:text="Description"
         android:textColor="#fff"
         android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
 
     <ImageView
         android:id="@+id/imgQuickCart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
-        android:paddingEnd="20dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:paddingLeft="5dp"
+        android:background="@drawable/background_img_cart"
         android:clickable="true"
         android:foreground="?attr/selectableItemBackground"
-        android:background="@drawable/background_img_cart"
+        android:paddingLeft="5dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_add_shopping_cart_black_24dp" />
+        app:srcCompat="@drawable/ic_add_shopping_cart_white_24dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

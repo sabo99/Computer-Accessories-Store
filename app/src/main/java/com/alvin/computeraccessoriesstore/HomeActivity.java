@@ -203,10 +203,10 @@ public class HomeActivity extends AppCompatActivity {
         builder = new AlertDialog.Builder(this).setCancelable(false);
         builder.setTitle("Sign Out")
                 .setMessage("Do you really want to Sign Out?")
-                .setNegativeButton("CANCEL", (dialog1, which) -> {
+                .setNegativeButton("NO", (dialog1, which) -> {
                     dialog1.dismiss();
                 })
-                .setPositiveButton("OK", (dialog1, which) -> {
+                .setPositiveButton("YES", (dialog1, which) -> {
                     dialog1.dismiss();
                     // Clear Model
                     Common.currentUser = null;
@@ -222,11 +222,9 @@ public class HomeActivity extends AppCompatActivity {
         dialog = builder.create();
         dialog.show();
 
-        Button btnNeg, btnPos;
+        Button btnPos;
         btnPos = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        btnNeg = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-        btnPos.setTextColor(Color.BLUE);
-        btnNeg.setTextColor(Color.RED);
+        btnPos.setTextColor(Color.RED);
     }
 
     @Override

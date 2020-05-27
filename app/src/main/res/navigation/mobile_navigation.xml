@@ -32,13 +32,11 @@
     <fragment
         android:id="@+id/nav_items"
         android:name="com.alvin.computeraccessoriesstore.ui.items.ItemsFragment"
-        android:label="@string/menu_items"
         tools:layout="@layout/fragment_items" />
 
     <fragment
         android:id="@+id/nav_items_detail"
         android:name="com.alvin.computeraccessoriesstore.ui.items_detail.ItemsDetailFragment"
-        android:label="@string/menu_items_detail"
         tools:layout="@layout/fragment_items_detail" />
 
     <fragment
