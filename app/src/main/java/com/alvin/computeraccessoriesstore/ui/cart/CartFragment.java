@@ -1,11 +1,14 @@
 package com.alvin.computeraccessoriesstore.ui.cart;
 
+import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -228,10 +231,22 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_clear_cart) {
-            clearCart();
+            showDialogClearCart();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showDialogClearCart() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext()).setCancelable(false);
+        builder.setTitle("Clear All Cart")
+                .setMessage("Are you sure clear all cart?")
+                .setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss())
+                .setPositiveButton("OK", (dialog, which) -> {
+                    dialog.dismiss();
+                    clearCart();
+                })
+                .create().show();
     }
 
     private void clearCart() {

@@ -26,6 +26,8 @@ public class HomeViewModel extends ViewModel implements IStoreCallbackListener, 
     private IStoreCallbackListener listenerStore;
     private ILoadSliderImageCallbackListener listenerSlider;
 
+    StoreModel storeModel;
+
     public HomeViewModel() {
         listenerStore = this;
         listenerSlider = this;
@@ -76,7 +78,7 @@ public class HomeViewModel extends ViewModel implements IStoreCallbackListener, 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds:dataSnapshot.getChildren()){
-                    StoreModel storeModel = ds.getValue(StoreModel.class);
+                    storeModel = ds.getValue(StoreModel.class);
                     storeModel.setItem_id(ds.getKey());
                     tempList.add(storeModel);
                 }

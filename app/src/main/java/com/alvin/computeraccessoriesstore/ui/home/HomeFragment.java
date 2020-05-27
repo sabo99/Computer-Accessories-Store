@@ -1,18 +1,18 @@
 package com.alvin.computeraccessoriesstore.ui.home;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -79,6 +79,9 @@ public class HomeFragment extends Fragment {
     }
 
     private void init() {
+
+        setHasOptionsMenu(true);
+
         recycler_store.setVisibility(View.GONE);
         recycler_store.setHasFixedSize(true);
         recycler_store.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
@@ -95,4 +98,5 @@ public class HomeFragment extends Fragment {
             sliderView.setCurrentPagePosition(position);
         });
     }
+
 }
