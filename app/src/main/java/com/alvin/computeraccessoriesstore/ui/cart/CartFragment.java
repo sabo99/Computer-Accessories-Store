@@ -1,14 +1,11 @@
 package com.alvin.computeraccessoriesstore.ui.cart;
 
-import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -116,8 +113,6 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
 
         initViews();
 
-        listener = this;
-
         cartViewModel.initCartDataSource(getContext());
         cartViewModel.getMutableLiveDataCartItems().observe(this, cartItems -> {
             if (cartItems == null || cartItems.isEmpty()) {
@@ -142,6 +137,8 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
     private void initViews() {
 
         setHasOptionsMenu(true);
+
+        listener = this;
 
         cartDataSource = new LocalCartDataSource(CartDatabase.getInstance(getContext()).cartDAO());
 
@@ -267,6 +264,7 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
                     public void onSuccess(Integer integer) {
                         Toast.makeText(getContext(), "Clear Cart Success", Toast.LENGTH_SHORT).show();
                         EventBus.getDefault().postSticky(new CounterCartEvent(true));
+                        txt_empty_cart.setVisibility(View.VISIBLE);
                     }
 
                     @Override
@@ -523,6 +521,7 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
                                 public void onSuccess(Integer integer) {
                                     EventBus.getDefault().postSticky(new CounterCartEvent(true));
                                     Toast.makeText(getContext(), "Order placed Successfully", Toast.LENGTH_SHORT).show();
+                                    txt_empty_cart.setVisibility(View.VISIBLE);
                                 }
 
                                 @Override
