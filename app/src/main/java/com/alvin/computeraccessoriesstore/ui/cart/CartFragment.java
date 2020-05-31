@@ -111,8 +111,6 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
 
         ButterKnife.bind(this, root);
 
-        initViews();
-
         cartViewModel.initCartDataSource(getContext());
         cartViewModel.getMutableLiveDataCartItems().observe(this, cartItems -> {
             if (cartItems == null || cartItems.isEmpty()) {
@@ -131,12 +129,16 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
             }
         });
 
+        initViews();
+
         return root;
     }
 
     private void initViews() {
 
         setHasOptionsMenu(true);
+
+        txt_empty_cart.setVisibility(View.VISIBLE);
 
         listener = this;
 
