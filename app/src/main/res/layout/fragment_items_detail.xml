@@ -10,7 +10,7 @@
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="#DFE4E6"
+        android:background="@drawable/border_bottom"
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
@@ -22,7 +22,6 @@
             app:contentScrim="@android:color/white"
             app:expandedTitleTextAppearance="@android:color/transparent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
 
             <ImageView
                 android:id="@+id/imgItemsDetail"
@@ -54,7 +53,6 @@
         app:pressedTranslationZ="12dp"
         app:useCompatPadding="true" />
 
-
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
@@ -70,35 +68,95 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardElevation="5dp"
-                app:cardUseCompatPadding="true">
+                app:cardCornerRadius="8dp"
+                app:cardElevation="5dp">
+
+                <RelativeLayout
+                    android:visibility="gone"
+                    android:id="@+id/rlTop"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        android:padding="12dp"
+                        android:gravity="center_horizontal">
+
+                        <ImageView
+                            android:id="@+id/imgItemsDetail2"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:layout_centerVertical="true" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_toRightOf="@id/imgItemsDetail2"
+                            android:orientation="vertical"
+                            android:paddingRight="10dp">
+
+                            <TextView
+                                android:id="@+id/itemsName2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:paddingLeft="12dp"
+                                android:paddingTop="10dp"
+                                android:paddingBottom="8dp"
+                                android:text="Item Name"
+                                android:textColor="@android:color/black"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+
+                            <TextView
+                                android:id="@+id/itemsPrice2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="10dp"
+                                android:text="1,000"
+                                android:textColor="@android:color/black"
+                                android:textSize="18sp"/>
+
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </RelativeLayout>
 
                 <LinearLayout
+                    android:id="@+id/llTop"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingRight="10dp">
 
                     <TextView
                         android:id="@+id/itemsName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:padding="12dp"
+                        android:layout_marginTop="16dp"
+                        android:paddingLeft="12dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="8dp"
                         android:text="Item Name"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="@android:color/black"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
 
                     <TextView
                         android:id="@+id/itemsPrice"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
                         android:text="1,000"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp" />
 
 
                     <com.cepheuen.elegantnumberbutton.view.ElegantNumberButton
@@ -120,6 +178,7 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:cardCornerRadius="8dp"
                 app:cardElevation="5dp"
                 app:cardUseCompatPadding="true">
 
@@ -135,17 +194,52 @@
                         android:paddingLeft="12dp"
                         android:text="Description"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@android:color/black" />
-
-                    <TextView
-                        android:id="@+id/itemsDescription"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:lineSpacingMultiplier="1.5"
-                        android:padding="12dp"
-                        android:text="Description"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textStyle="bold" />
+
+                    <!--                    <TextView-->
+                    <!--                        android:id="@+id/itemsDescription"-->
+                    <!--                        android:layout_width="wrap_content"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        android:justificationMode="inter_word"-->
+                    <!--                        android:lineSpacingMultiplier="1.5"-->
+                    <!--                        android:padding="12dp"-->
+                    <!--                        android:text="Description"-->
+                    <!--                        android:textColor="@android:color/black"-->
+                    <!--                        android:textSize="14sp" />-->
+
+                    <com.ms.square.android.expandabletextview.ExpandableTextView
+                        android:id="@+id/itemsDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tvJudul"
+                        android:clickable="true"
+                        android:foreground="?attr/selectableItemBackground"
+                        app:animDuration="200"
+                        app:maxCollapsedLines="2">
+
+                        <TextView
+                            android:id="@+id/expandable_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:justificationMode="inter_word"
+                            android:lineSpacingMultiplier="1.5"
+                            android:padding="12dp"
+                            android:text="Description"
+                            android:textColor="@android:color/black"
+                            android:textSize="14dp" />
+
+                        <ImageButton
+                            android:id="@+id/expand_collapse"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center|bottom"
+                            android:background="@android:color/transparent"
+                            android:layout_marginBottom="10dp"
+                            android:padding="5dp" />
+
+                    </com.ms.square.android.expandabletextview.ExpandableTextView>
 
                 </LinearLayout>
 
@@ -156,6 +250,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="40dp"
+                app:cardCornerRadius="8dp"
                 app:cardElevation="5dp"
                 app:cardUseCompatPadding="true">
 
@@ -171,18 +266,52 @@
                         android:paddingLeft="12dp"
                         android:text="Specification"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@android:color/black" />
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold" />
 
-                    <TextView
+<!--                    <TextView-->
+<!--                        android:id="@+id/itemsSpecification"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:lineSpacingMultiplier="1.5"-->
+<!--                        android:padding="12dp"-->
+<!--                        android:text="Specification"-->
+<!--                        android:textColor="@android:color/black"-->
+<!--                        android:textSize="14sp" />-->
+
+                    <com.ms.square.android.expandabletextview.ExpandableTextView
                         android:id="@+id/itemsSpecification"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:lineSpacingMultiplier="1.5"
-                        android:justificationMode="inter_word"
-                        android:padding="12dp"
-                        android:text="Specification"
-                        android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:layout_below="@+id/tvJudul"
+                        android:clickable="true"
+                        android:foreground="?attr/selectableItemBackground"
+                        app:animDuration="200"
+                        app:maxCollapsedLines="7">
+
+                        <TextView
+                            android:id="@+id/expandable_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:lineSpacingMultiplier="1.5"
+                            android:padding="12dp"
+                            android:text="Description"
+                            android:textColor="@android:color/black"
+                            android:textSize="14dp"
+                            tools:ignore="DuplicateIds" />
+
+                        <ImageButton
+                            android:id="@+id/expand_collapse"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center|bottom"
+                            android:background="@android:color/transparent"
+                            android:layout_marginBottom="10dp"
+                            android:padding="5dp"
+                            tools:ignore="DuplicateIds" />
+
+                    </com.ms.square.android.expandabletextview.ExpandableTextView>
 
                 </LinearLayout>
 

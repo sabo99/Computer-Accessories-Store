@@ -4,10 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="250dp"
-    android:background="#DFE4E6"
+    android:background="@color/cardColor"
     android:clickable="true"
-    android:foreground="?attr/selectableItemBackground"
-    app:cardBackgroundColor="#DFE4E6">
+    android:foreground="?attr/selectableItemBackground">
 
     <ImageView
         android:id="@+id/imgItems"
@@ -82,7 +81,7 @@
         android:layout_marginTop="50dp"
         android:background="@drawable/background_img_cart"
         android:clickable="true"
-        android:foreground="?attr/selectableItemBackground"
+        android:foreground="?android:attr/selectableItemBackground"
         android:paddingLeft="5dp"
         android:paddingTop="5dp"
         android:paddingEnd="20dp"

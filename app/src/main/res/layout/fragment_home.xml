@@ -16,11 +16,11 @@
         android:id="@+id/title_home"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="26sp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="16dp"
         android:text="Pick any accessories computer with us!"
-        android:layout_marginTop="40dp"/>
+        android:textSize="26sp" />
 
     <ProgressBar
         android:id="@+id/pbStore"
@@ -38,26 +38,27 @@
         android:layout_marginTop="20dp" />
 
     <RelativeLayout
-        android:layout_below="@id/title_home"
         android:id="@+id/sliderLayout"
         android:layout_width="match_parent"
         android:layout_height="150dp"
+        android:layout_below="@id/title_home"
         android:layout_marginTop="15dp"
         android:clickable="true"
         android:foreground="?attr/selectableItemBackground">
 
         <ProgressBar
             android:id="@+id/pbSlider"
-            android:indeterminate="true"
-            android:layout_centerInParent="true"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:indeterminate="true" />
 
 
         <com.smarteist.autoimageslider.SliderView
             android:id="@+id/imgSlider"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:visibility="gone"
             app:sliderAnimationDuration="600"
             app:sliderAutoCycleDirection="back_and_forth"
             app:sliderIndicatorAnimationDuration="600"
@@ -68,8 +69,7 @@
             app:sliderIndicatorRadius="1.5dp"
             app:sliderIndicatorSelectedColor="#5A5A5A"
             app:sliderIndicatorUnselectedColor="#FFF"
-            app:sliderScrollTimeInSec="1"
-            android:visibility="gone"/>
+            app:sliderScrollTimeInSec="1" />
 
     </RelativeLayout>
 

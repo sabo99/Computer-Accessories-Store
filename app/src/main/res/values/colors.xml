@@ -5,4 +5,5 @@
     <color name="colorAccent">@android:color/holo_blue_light</color>
     <color name="background">#FFFFFF</color>
     <color name="shimmerColor">#DDDDDD</color>
+    <color name="cardColor">#DFE4E6</color>
 </resources>
