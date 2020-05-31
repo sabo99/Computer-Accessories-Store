@@ -10,7 +10,6 @@
         android:id="@+id/rvDataViewOrder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         tools:listitem="@layout/item_order_list" />
 
     <ProgressBar
@@ -19,5 +18,18 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:indeterminate="true" />
+
+
+    <TextView
+        android:id="@+id/txt_empty_cart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="250dp"
+        android:layout_marginEnd="8dp"
+        android:text="NO ITEMS"
+        android:textSize="25sp"
+        android:textStyle="bold" />
 
 </RelativeLayout>

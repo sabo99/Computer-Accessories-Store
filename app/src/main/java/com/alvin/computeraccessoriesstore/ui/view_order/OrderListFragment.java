@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alvin.computeraccessoriesstore.Adapter.OrdersAdapter;
@@ -35,7 +36,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class OrderListFragment extends Fragment implements ILoadOrderCallbackListener {
+public class OrderListFragment extends Fragment {
 
     private OrderListViewModel orderListViewModel;
 
@@ -43,12 +44,10 @@ public class OrderListFragment extends Fragment implements ILoadOrderCallbackLis
     RecyclerView recycler_orders;
     @BindView(R.id.pbOrder)
     ProgressBar progressBar;
+    @BindView(R.id.txt_empty_cart)
+    TextView txt_empty_cart;
 
-    ILoadOrderCallbackListener listener;
-
-    FirebaseAuth firebaseAuth;
-    FirebaseUser user;
-
+    OrdersAdapter adapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -60,17 +59,19 @@ public class OrderListFragment extends Fragment implements ILoadOrderCallbackLis
         ButterKnife.bind(this, root);
 
         initViews();
-        loadOrderFromFirebase();
 
         orderListViewModel.getMutableLiveDataOrderList().observe(this, orderList -> {
-            if (orderList != null){
+            adapter = new OrdersAdapter(getContext(), orderList);
+            if (orderList == null || orderList.isEmpty()){
                 progressBar.setVisibility(View.GONE);
-                recycler_orders.setVisibility(View.VISIBLE);
-                OrdersAdapter adapter = new OrdersAdapter(getContext(), orderList);
-                recycler_orders.setAdapter(adapter);
+                recycler_orders.setVisibility(View.GONE);
+                txt_empty_cart.setVisibility(View.VISIBLE);
             }
             else {
                 progressBar.setVisibility(View.GONE);
+                txt_empty_cart.setVisibility(View.GONE);
+                recycler_orders.setVisibility(View.VISIBLE);
+                recycler_orders.setAdapter(adapter);
             }
 
         });
@@ -78,52 +79,16 @@ public class OrderListFragment extends Fragment implements ILoadOrderCallbackLis
         return root;
     }
 
-    private void loadOrderFromFirebase() {
-        List<Order> orderList = new ArrayList<>();
-        FirebaseDatabase.getInstance().getReference(Common.ORDER_REF)
-                .orderByChild("email")
-                .equalTo(user.getEmail())
-                .limitToLast(100)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot ds:dataSnapshot.getChildren()){
-                            Order order = ds.getValue(Order.class);
-                            order.setOrderNumber(ds.getKey()); // Remember set it
-                            orderList.add(order);
-                        }
-
-                        listener.onLoadOrderSuccess(orderList);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        listener.onLoadOrderFailed(databaseError.getMessage());
-                    }
-                });
-    }
-
     private void initViews() {
 
         progressBar.setVisibility(View.VISIBLE);
+        txt_empty_cart.setVisibility(View.GONE);
+        recycler_orders.setVisibility(View.GONE);
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        user = firebaseAuth.getCurrentUser();
 
-        listener = this;
         recycler_orders.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recycler_orders.setLayoutManager(layoutManager);
     }
 
-
-    @Override
-    public void onLoadOrderSuccess(List<Order> orderList) {
-        orderListViewModel.setMutableLiveDataOrderList(orderList);
-    }
-
-    @Override
-    public void onLoadOrderFailed(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-    }
 }
