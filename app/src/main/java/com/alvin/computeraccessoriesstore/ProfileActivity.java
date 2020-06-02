@@ -256,8 +256,6 @@ public class ProfileActivity extends AppCompatActivity {
                                     dialog1.dismiss();
                                     dialog.dismiss();
                                     updateUserProfile(updateData);
-                                    pbUploadImage.setVisibility(View.INVISIBLE);
-
                                 })
                                 .setNegativeButton("CANCEL", (dialog1, which) -> {
                                     dialog1.dismiss();
@@ -279,6 +277,7 @@ public class ProfileActivity extends AppCompatActivity {
                 .updateChildren(updateData)
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    pbUploadImage.setVisibility(View.INVISIBLE);
                     dialog.dismiss();
                 })
                 .addOnSuccessListener(aVoid -> {
