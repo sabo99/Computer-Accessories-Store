@@ -129,6 +129,7 @@ public class HomeActivity extends AppCompatActivity {
         firebaseUser = firebaseAuth.getCurrentUser();
         storageReference = FirebaseStorage.getInstance().getReference();
 
+        imgPhotoHeader.setVisibility(View.INVISIBLE);
 
         // Set Image
         StorageReference profileRef = storageReference.child(Common.USER_REF + "/" + firebaseUser.getUid() + "/profile.jpg");
@@ -151,6 +152,7 @@ public class HomeActivity extends AppCompatActivity {
 
                         tvNameHeader.setText(userModel.getName());
                         tvEmailHeader.setText(userModel.getEmail());
+                        imgPhotoHeader.setVisibility(View.VISIBLE);
                         pbHeader.setVisibility(View.GONE);
                     }
 

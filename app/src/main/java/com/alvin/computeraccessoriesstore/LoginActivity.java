@@ -270,7 +270,13 @@ public class LoginActivity extends AppCompatActivity {
 
         initClear();
 
-        if (firebaseAuth.getCurrentUser() != null) {
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (firebaseUser!= null) {
             Toast.makeText(this, "User is Logged in Already", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
             finish();

@@ -135,7 +135,7 @@ public class RegisterActivity extends AppCompatActivity {
                                                     .setPositiveButton("Continue", (dialog1, which) -> {
                                                         dialog1.dismiss();
                                                         initClear();
-                                                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                                                        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                                                     });
                                             dialog = builder.create();
                                             dialog.show();
