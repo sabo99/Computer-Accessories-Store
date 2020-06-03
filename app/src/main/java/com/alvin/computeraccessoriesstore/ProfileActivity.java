@@ -19,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -87,6 +88,10 @@ public class ProfileActivity extends AppCompatActivity {
     TextView tvPhone;
     @BindView(R.id.imgPhoto)
     CircleImageView imgPhoto;
+    @BindView(R.id.tvNotifVerified)
+    TextView tvNotifVerified;
+    @BindView(R.id.tvVerify)
+    TextView tvVerify;
 
     TextView tvNotif, title, message;
     TextInputLayout tilResetEmail, tilResetPasswordOld, tilResetPasswordNew;
@@ -107,13 +112,13 @@ public class ProfileActivity extends AppCompatActivity {
 
             builder = new AlertDialog.Builder(this).setCancelable(false);
             builder.setTitle("Email is not Verified!")
-                    .setMessage("Verification Email has been sent. You must be logout and verify email first")
+                    .setMessage("Please verified your account, before change photo profile!")
                     .setPositiveButton("Continue", (dialog1, which) -> {
-                        firebaseUser.sendEmailVerification();
-                        firebaseAuth.signOut();
-                        startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
-                        finish();
-                    }).create().show();
+                      dialog1.dismiss();
+                    });
+            dialog = builder.create();
+            dialog.show();
+            displayDialog(dialog);
 
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
@@ -204,14 +209,13 @@ public class ProfileActivity extends AppCompatActivity {
 
             builder = new AlertDialog.Builder(this).setCancelable(false);
             builder.setTitle("Email is not Verified!")
-                    .setMessage("Verification Email has been sent. You must be logout and verify email first")
+                    .setMessage("Please verified your account, before edit profile!")
                     .setPositiveButton("Continue", (dialog1, which) -> {
-                        firebaseUser.sendEmailVerification();
-                        firebaseAuth.signOut();
-                        startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
-                        finish();
-                    }).create().show();
-
+                       dialog1.dismiss();
+                    });
+            dialog = builder.create();
+            dialog.show();
+            displayDialog(dialog);
         } else {
             View view = LayoutInflater.from(this).inflate(R.layout.layout_profile_edit, null);
             builder = new AlertDialog.Builder(this).setCancelable(false).setView(view);
@@ -304,13 +308,13 @@ public class ProfileActivity extends AppCompatActivity {
 
             builder = new AlertDialog.Builder(this).setCancelable(false);
             builder.setTitle("Email is not Verified!")
-                    .setMessage("Verification Email has been sent. You must be logout and verify email first")
+                    .setMessage("Please verified your account, before reset password!")
                     .setPositiveButton("Continue", (dialog1, which) -> {
-                        firebaseUser.sendEmailVerification();
-                        firebaseAuth.signOut();
-                        startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
-                        finish();
-                    }).create().show();
+                        dialog1.dismiss();
+                    });
+            dialog = builder.create();
+            dialog.show();
+            displayDialog(dialog);
 
         } else {
             View view = LayoutInflater.from(this).inflate(R.layout.layout_resetpassword, null);
@@ -493,6 +497,58 @@ public class ProfileActivity extends AppCompatActivity {
                         Log.d("userRef", databaseError.getMessage());
                     }
                 });
-
+        
+        if (!firebaseUser.isEmailVerified()){
+            tvNotifVerified.setVisibility(View.VISIBLE);
+            tvVerify.setVisibility(View.VISIBLE);
+        }else {
+            tvNotifVerified.setVisibility(View.GONE);
+            tvVerify.setVisibility(View.GONE);
+        }
     }
+    
+    @OnClick(R.id.tvVerify)
+    void onVerifyEmail(){
+        builder = new AlertDialog.Builder(this).setCancelable(false);
+        builder.setTitle("Email Verification")
+                .setMessage("Verification Email has been sent. You must be logout and verify email first")
+                .setPositiveButton("Continue", (dialog1, which) -> {
+                    firebaseUser.sendEmailVerification();
+                    firebaseAuth.signOut();
+                    startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
+                    finish();
+                    dialog1.dismiss();
+                });
+        dialog = builder.create();
+        dialog.show();
+        displayDialog(dialog);
+    }
+
+    private void displayDialog(AlertDialog dialog) {
+
+        Button pos;
+        TextView title, message;
+        LinearLayout.LayoutParams paramsButton =
+                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        LinearLayout.LayoutParams paramMessage =
+                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        title = this.dialog.findViewById(getResources().getIdentifier("alertTitle", "id", "android"));
+        title.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+
+        message = this.dialog.findViewById(android.R.id.message);
+        paramMessage.setMargins(0, 20, 0, 0);
+        message.setLayoutParams(paramMessage);
+        message.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+
+        pos = this.dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+
+        paramsButton.setMargins(0, 0, 0, 20);
+        paramsButton.gravity = Gravity.CENTER;
+        pos.setLayoutParams(paramsButton);
+    }
+
 }

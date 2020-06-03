@@ -22,117 +22,138 @@
                 android:background="@drawable/ic_wave_2"
                 tools:ignore="Orientation" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_action_search"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_below="@id/ll1"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="-10dp"
-                android:layout_marginRight="10dp"
-                app:cardBackgroundColor="@color/cardColor"
-                app:cardCornerRadius="10dp">
-
-                <RelativeLayout
-                    android:id="@+id/rl_action_search"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clickable="true"
-                    android:foreground="?android:attr/selectableItemBackground">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_toLeftOf="@id/card"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:padding="10dp"
-                        android:text="Search any gear computer"
-                        android:textSize="18sp" />
-
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/card"
-                        android:layout_width="50dp"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        app:cardBackgroundColor="@color/colorPrimaryDark"
-                        app:cardCornerRadius="10dp">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:scaleType="center"
-                            android:src="@drawable/ic_search_black_24dp" />
-                    </androidx.cardview.widget.CardView>
-
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-
-            <TextView
-                android:id="@+id/title_home"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/card_action_search"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="16dp"
-                android:text="Pick any accessories computer with us!"
-                android:textSize="26sp" />
 
             <ProgressBar
-                android:id="@+id/pbStore"
+                android:id="@+id/pbTitleHome"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/sliderLayout"
+                android:layout_below="@id/ll1"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="80dp" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvDataStore"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/sliderLayout"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="40dp" />
+                android:layout_marginTop="40dp"
+                android:layout_height="wrap_content"/>
 
             <RelativeLayout
-                android:id="@+id/sliderLayout"
+                android:visibility="invisible"
+                android:id="@+id/rl_title_home"
+                android:layout_below="@id/ll1"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_below="@id/title_home"
-                android:layout_marginTop="15dp"
-                android:clickable="true"
-                android:foreground="?attr/selectableItemBackground">
+                android:layout_height="match_parent">
 
-                <ProgressBar
-                    android:id="@+id/pbSlider"
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_action_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    app:cardBackgroundColor="@color/cardColor"
+                    app:cardCornerRadius="10dp">
+
+                    <RelativeLayout
+                        android:id="@+id/rl_action_search"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_toLeftOf="@id/card"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:padding="10dp"
+                            android:text="Search any gear computer"
+                            android:textSize="18sp" />
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/card"
+                            android:layout_width="50dp"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            app:cardBackgroundColor="@color/colorPrimaryDark"
+                            app:cardCornerRadius="10dp">
+
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:scaleType="center"
+                                android:src="@drawable/ic_search_black_24dp" />
+                        </androidx.cardview.widget.CardView>
+
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:indeterminate="true" />
+                    android:layout_below="@id/card_action_search"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="Pick any accessories computer with us!"
+                    android:textSize="26sp" />
+            </RelativeLayout>
 
+            <RelativeLayout
+                android:layout_below="@id/rl_title_home"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-                <com.smarteist.autoimageslider.SliderView
-                    android:id="@+id/imgSlider"
+                <ProgressBar
+                    android:id="@+id/pbStore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/sliderLayout"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="80dp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvDataStore"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:visibility="gone"
-                    app:sliderAnimationDuration="600"
-                    app:sliderAutoCycleDirection="back_and_forth"
-                    app:sliderIndicatorAnimationDuration="600"
-                    app:sliderIndicatorGravity="right|bottom"
-                    app:sliderIndicatorMargin="15dp"
-                    app:sliderIndicatorOrientation="horizontal"
-                    app:sliderIndicatorPadding="1dp"
-                    app:sliderIndicatorRadius="1.5dp"
-                    app:sliderIndicatorSelectedColor="#5A5A5A"
-                    app:sliderIndicatorUnselectedColor="#FFF"
-                    app:sliderScrollTimeInSec="1" />
+                    android:layout_below="@id/sliderLayout"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="40dp" />
+
+                <RelativeLayout
+                    android:id="@+id/sliderLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:layout_marginTop="15dp"
+                    android:clickable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <ProgressBar
+                        android:id="@+id/pbSlider"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:indeterminate="true" />
+
+
+                    <com.smarteist.autoimageslider.SliderView
+                        android:id="@+id/imgSlider"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone"
+                        app:sliderAnimationDuration="600"
+                        app:sliderAutoCycleDirection="back_and_forth"
+                        app:sliderIndicatorAnimationDuration="600"
+                        app:sliderIndicatorGravity="right|bottom"
+                        app:sliderIndicatorMargin="15dp"
+                        app:sliderIndicatorOrientation="horizontal"
+                        app:sliderIndicatorPadding="1dp"
+                        app:sliderIndicatorRadius="1.5dp"
+                        app:sliderIndicatorSelectedColor="#5A5A5A"
+                        app:sliderIndicatorUnselectedColor="#FFF"
+                        app:sliderScrollTimeInSec="1" />
+
+                </RelativeLayout>
 
             </RelativeLayout>
 
-
         </RelativeLayout>
+
+
 
     </ScrollView>
 

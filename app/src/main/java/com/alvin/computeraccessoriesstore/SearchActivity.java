@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -81,7 +82,7 @@ public class SearchActivity extends AppCompatActivity {
         searchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
             @Override
             public void onSearchStateChanged(boolean enabled) {
-                if(!enabled)
+                if (!enabled)
                     rvDataItemsSearch.setAdapter(adapter);
             }
 
@@ -99,7 +100,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private void startSearchItems(CharSequence text) {
         result = new ArrayList<>();
-        for (ItemsModel itemsModel : localDataSource){
+        for (ItemsModel itemsModel : localDataSource) {
             if (itemsModel.getName().toLowerCase().contains(text) || itemsModel.getName().contains(text))
                 result.add(itemsModel);
         }
@@ -115,9 +116,9 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 tempList = new ArrayList<>();
-                for (DataSnapshot ds : dataSnapshot.getChildren()){
-                    if (ds.child(Common.CHILD_ITEMS).getValue() != null){
-                        for (DataSnapshot items : ds.child(Common.CHILD_ITEMS).getChildren()){
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    if (ds.child(Common.CHILD_ITEMS).getValue() != null) {
+                        for (DataSnapshot items : ds.child(Common.CHILD_ITEMS).getChildren()) {
                             ItemsModel itemsModel = items.getValue(ItemsModel.class);
                             tempList.add(itemsModel);
                         }
@@ -141,6 +142,12 @@ public class SearchActivity extends AppCompatActivity {
 
         pbSearch.setVisibility(View.INVISIBLE);
         rvDataItemsSearch.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        searchBar.disableSearch();
     }
 
     @Override

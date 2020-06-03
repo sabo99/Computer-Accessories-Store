@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,6 +30,7 @@ import com.smarteist.autoimageslider.SliderView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.supercharge.shimmerlayout.ShimmerLayout;
 
 public class HomeFragment extends Fragment {
 
@@ -42,6 +44,11 @@ public class HomeFragment extends Fragment {
     SliderView sliderView;
     @BindView(R.id.pbSlider)
     ProgressBar progressBar2;
+    @BindView(R.id.pbTitleHome)
+    ProgressBar pbTitleHome;
+    @BindView(R.id.rl_title_home)
+    RelativeLayout rl_title_home;
+
 
     @OnClick(R.id.rl_action_search)
     void onSearchItem(){
@@ -63,10 +70,14 @@ public class HomeFragment extends Fragment {
 
             if (storeModelList == null || storeModelList.isEmpty()) {
                 progressBar.setVisibility(View.GONE);
+                pbTitleHome.setVisibility(View.GONE);
             } else {
                 recycler_store.setAdapter(adapter);
                 progressBar.setVisibility(View.GONE);
                 recycler_store.setVisibility(View.VISIBLE);
+
+                pbTitleHome.setVisibility(View.GONE);
+                rl_title_home.setVisibility(View.VISIBLE);
             }
         });
 
@@ -107,4 +118,8 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
 }

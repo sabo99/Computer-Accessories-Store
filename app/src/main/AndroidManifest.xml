@@ -17,8 +17,7 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".SearchActivity"
-            android:parentActivityName=".HomeActivity"
-            android:launchMode="singleTop"/>
+            android:parentActivityName=".HomeActivity" />
         <activity
             android:name=".SplashActivity"
             android:theme="@style/Splash">
@@ -32,7 +31,7 @@
             android:name=".HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleTask"/>
         <activity
             android:name=".ProfileActivity"
             android:label="Profile"

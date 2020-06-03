@@ -108,7 +108,7 @@
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_marginTop="40dp"
                             android:orientation="vertical"
                             android:paddingLeft="16dp"
@@ -220,7 +220,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="10dp"
-                                android:layout_marginBottom="30dp"
+                                android:layout_marginBottom="20dp"
                                 android:layout_weight="1"
                                 android:orientation="horizontal">
 
@@ -255,9 +255,32 @@
                                         android:textStyle="bold" />
 
 
+                                    <TextView
+                                        android:id="@+id/tvNotifVerified"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_horizontal"
+                                        android:gravity="center_horizontal"
+                                        android:text="You can't edit profiles. \nYour Account has been not verified!"
+                                        android:textColor="@android:color/holo_red_light" />
+
+                                    <TextView
+                                        android:id="@+id/tvVerify"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_horizontal"
+                                        android:layout_marginTop="8dp"
+                                        android:clickable="true"
+                                        android:foreground="?attr/selectableItemBackground"
+                                        android:gravity="center_horizontal"
+                                        android:text="Verify Account!"
+                                        android:textColor="@color/colorPrimaryDark"
+                                        android:textSize="18sp" />
+
                                 </LinearLayout>
 
                             </LinearLayout>
+
 
                         </LinearLayout>
 
