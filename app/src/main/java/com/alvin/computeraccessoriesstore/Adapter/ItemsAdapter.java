@@ -1,6 +1,7 @@
 package com.alvin.computeraccessoriesstore.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import com.alvin.computeraccessoriesstore.Common.Common;
 import com.alvin.computeraccessoriesstore.Common.IRecyclerClickListener;
 import com.alvin.computeraccessoriesstore.EventBus.CounterCartEvent;
 import com.alvin.computeraccessoriesstore.EventBus.ItemsDetailClick;
+import com.alvin.computeraccessoriesstore.HomeActivity;
 import com.alvin.computeraccessoriesstore.Model.ItemsModel;
 import com.alvin.computeraccessoriesstore.R;
 import com.alvin.computeraccessoriesstore.RoomDB.CartDataSource;
@@ -68,6 +70,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
         holder.priceItems.setText(new StringBuilder("IDR ").append(Common.formatPrice(Double.valueOf(list.getPrice()))));
         // Event
         holder.setListener((view, pos) -> {
+            context.startActivity(new Intent(context, HomeActivity.class));
             Common.selectedItems = itemsModelList.get(pos);
             Common.selectedItems.setKey(String.valueOf(pos));
             EventBus.getDefault().postSticky(new ItemsDetailClick(true, itemsModelList.get(pos)));

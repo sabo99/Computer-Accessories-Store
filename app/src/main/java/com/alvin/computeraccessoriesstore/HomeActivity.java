@@ -243,7 +243,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    public void onItemsDetailSelecter(ItemsDetailClick event){
+    public void onItemsDetailSelected(ItemsDetailClick event){
         if (event.isSuccess()){
             navController.navigate(R.id.nav_items_detail);
         }

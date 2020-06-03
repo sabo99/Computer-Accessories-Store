@@ -18,6 +18,7 @@ public class Common {
     public static final String F_EMAIL = "email";
     public static final String F_PHONE = "phone";
     public static final String F_IMAGE = "image";
+    public static final String CHILD_ITEMS = "items";
 
     //public static final int REQUEST_GALLERY_CODE = 1000;
     public static final int REQUEST_WRITE_PERMISSION = 78905;

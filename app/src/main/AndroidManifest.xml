@@ -16,6 +16,10 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".SearchActivity"
+            android:parentActivityName=".HomeActivity"
+            android:launchMode="singleTop"/>
+        <activity
             android:name=".SplashActivity"
             android:theme="@style/Splash">
             <intent-filter>
@@ -27,12 +31,13 @@
         <activity
             android:name=".HomeActivity"
             android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleInstance"/>
         <activity
             android:name=".ProfileActivity"
             android:label="Profile"
-            android:theme="@style/LoginRegister"
-            android:parentActivityName=".HomeActivity" />
+            android:parentActivityName=".HomeActivity"
+            android:theme="@style/LoginRegister" />
         <activity
             android:name=".RegisterActivity"
             android:label="Sign Up"

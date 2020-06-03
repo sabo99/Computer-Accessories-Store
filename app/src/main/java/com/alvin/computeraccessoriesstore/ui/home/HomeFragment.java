@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -20,12 +21,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alvin.computeraccessoriesstore.Adapter.SliderAdapter;
 import com.alvin.computeraccessoriesstore.Adapter.StoreAdapter;
 import com.alvin.computeraccessoriesstore.R;
+import com.alvin.computeraccessoriesstore.SearchActivity;
 import com.smarteist.autoimageslider.IndicatorAnimations;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class HomeFragment extends Fragment {
 
@@ -39,6 +42,11 @@ public class HomeFragment extends Fragment {
     SliderView sliderView;
     @BindView(R.id.pbSlider)
     ProgressBar progressBar2;
+
+    @OnClick(R.id.rl_action_search)
+    void onSearchItem(){
+        startActivity(new Intent(getContext(), SearchActivity.class));
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
