@@ -419,7 +419,7 @@ public class ProfileActivity extends AppCompatActivity {
     @OnClick(R.id.btnSignOut)
     void signOut() {
         builder = new AlertDialog.Builder(this).setCancelable(false);
-        builder.setMessage("Sign Out?")
+        builder.setMessage("Change Account?")
                 .setNegativeButton("NO", (dialog1, which) -> {
                     dialog1.dismiss();
                 })

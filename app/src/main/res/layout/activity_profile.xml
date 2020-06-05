@@ -9,17 +9,18 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/white"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
             android:theme="@style/ToolbarColoredBackArrow"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:titleTextColor="@android:color/black" />
+            app:titleTextColor="@android:color/white" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -318,7 +319,7 @@
                     android:layout_marginBottom="20dp"
                     android:background="@drawable/button_danger_selector"
                     android:foreground="?attr/selectableItemBackground"
-                    android:text="Sign out"
+                    android:text="Change Account"
                     android:textColor="@drawable/button_danger_text" />
 
             </LinearLayout>

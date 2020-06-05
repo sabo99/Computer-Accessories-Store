@@ -4,168 +4,202 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@color/colorPrimaryDark"
     tools:context=".ui.home.HomeFragment">
 
-    <ScrollView
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/ll1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="35dp"
+            android:background="@drawable/ic_wave"
+            tools:ignore="Orientation" />
 
-            <LinearLayout
-                android:id="@+id/ll1"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="@drawable/ic_wave_2"
-                tools:ignore="Orientation" />
+        <TextView
+            android:id="@+id/tv1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ll1"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="-10dp"
+            android:layout_marginEnd="16dp"
+            android:text="Explore"
+            android:textColor="@android:color/holo_blue_bright"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/tv2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv1"
+            android:layout_marginStart="16dp"
+            android:text="Gear Computer"
+            android:textColor="@color/white"
+            android:textSize="22sp" />
 
 
-            <ProgressBar
-                android:id="@+id/pbTitleHome"
-                android:layout_width="wrap_content"
-                android:layout_below="@id/ll1"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="40dp"
-                android:layout_height="wrap_content"/>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_action_search"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@id/tv2"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="30dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="10dp">
 
             <RelativeLayout
-                android:visibility="invisible"
-                android:id="@+id/rl_title_home"
-                android:layout_below="@id/ll1"
+                android:id="@+id/rl_action_search"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/card_action_search"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    app:cardBackgroundColor="@color/cardColor"
-                    app:cardCornerRadius="10dp">
-
-                    <RelativeLayout
-                        android:id="@+id/rl_action_search"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_toLeftOf="@id/card"
-                            android:gravity="center_vertical|center_horizontal"
-                            android:padding="10dp"
-                            android:text="Search any gear computer"
-                            android:textSize="18sp" />
-
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/card"
-                            android:layout_width="50dp"
-                            android:layout_height="match_parent"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            app:cardBackgroundColor="@color/colorPrimaryDark"
-                            app:cardCornerRadius="10dp">
-
-                            <ImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:scaleType="center"
-                                android:src="@drawable/ic_search_black_24dp" />
-                        </androidx.cardview.widget.CardView>
-
-                    </RelativeLayout>
-                </androidx.cardview.widget.CardView>
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/card_action_search"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="16dp"
-                    android:text="Pick any accessories computer with us!"
-                    android:textSize="26sp" />
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_toLeftOf="@id/card"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="15dp"
+                    android:text="Search any gear computer"
+                    android:textSize="16sp" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    app:cardBackgroundColor="@color/colorPrimary"
+                    app:cardCornerRadius="10dp">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_search_black_24dp" />
+                </androidx.cardview.widget.CardView>
+
             </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/card_action_search"
+            android:layout_marginTop="-30dp"
+            android:background="@drawable/background_top_radius">
+
+            <TextView
+                android:id="@+id/tvPopular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="40dp"
+                android:text="Popular"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="20sp" />
+
+            <View
+                android:id="@+id/v1"
+                android:layout_width="15dp"
+                android:layout_height="2dp"
+                android:layout_below="@id/tvPopular"
+                android:layout_marginLeft="20dp"
+                android:background="@color/colorPrimaryDark" />
 
             <RelativeLayout
-                android:layout_below="@id/rl_title_home"
+                android:id="@+id/rlSlider"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="150dp"
+                android:layout_marginTop="70dp">
+
+                <com.smarteist.autoimageslider.SliderView
+                    android:id="@+id/imgSlider"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:visibility="invisible"
+                    app:sliderAnimationDuration="600"
+                    app:sliderAutoCycleDirection="back_and_forth"
+                    app:sliderIndicatorAnimationDuration="600"
+                    app:sliderIndicatorGravity="right|bottom"
+                    app:sliderIndicatorMargin="15dp"
+                    app:sliderIndicatorOrientation="horizontal"
+                    app:sliderIndicatorPadding="1dp"
+                    app:sliderIndicatorRadius="1.5dp"
+                    app:sliderIndicatorSelectedColor="#5A5A5A"
+                    app:sliderIndicatorUnselectedColor="#FFF"
+                    app:sliderScrollTimeInSec="1" />
 
                 <ProgressBar
                     android:id="@+id/pbStore"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/sliderLayout"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="80dp" />
+                    android:layout_marginTop="60dp" />
+
+            </RelativeLayout>
+
+
+            <TextView
+                android:id="@+id/tvCategory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/rlSlider"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:text="Category"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="20sp" />
+
+            <View
+                android:id="@+id/v2"
+                android:layout_width="15dp"
+                android:layout_height="2dp"
+                android:layout_below="@id/tvCategory"
+                android:layout_marginLeft="20dp"
+                android:background="@color/colorPrimaryDark" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/tvCategory">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvDataStore"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_below="@id/sliderLayout"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="40dp" />
+                    android:layout_marginTop="10dp"/>
 
-                <RelativeLayout
-                    android:id="@+id/sliderLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_marginTop="15dp"
-                    android:clickable="true"
-                    android:foreground="?attr/selectableItemBackground">
-
-                    <ProgressBar
-                        android:id="@+id/pbSlider"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:indeterminate="true" />
-
-
-                    <com.smarteist.autoimageslider.SliderView
-                        android:id="@+id/imgSlider"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:visibility="gone"
-                        app:sliderAnimationDuration="600"
-                        app:sliderAutoCycleDirection="back_and_forth"
-                        app:sliderIndicatorAnimationDuration="600"
-                        app:sliderIndicatorGravity="right|bottom"
-                        app:sliderIndicatorMargin="15dp"
-                        app:sliderIndicatorOrientation="horizontal"
-                        app:sliderIndicatorPadding="1dp"
-                        app:sliderIndicatorRadius="1.5dp"
-                        app:sliderIndicatorSelectedColor="#5A5A5A"
-                        app:sliderIndicatorUnselectedColor="#FFF"
-                        app:sliderScrollTimeInSec="1" />
-
-                </RelativeLayout>
+                <ProgressBar
+                    android:id="@+id/pbSlider"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="80dp"
+                    android:indeterminate="true" />
 
             </RelativeLayout>
 
+
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="100dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="-15dp"
+                android:src="@drawable/logo"
+                android:translationZ="-1dp" />
+
         </RelativeLayout>
 
-
-
-    </ScrollView>
-
-
-    <ImageView
-        android:layout_width="200dp"
-        android:layout_height="100dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="-15dp"
-        android:src="@drawable/logo"
-        android:translationZ="-1dp" />
+    </RelativeLayout>
 
 
 </RelativeLayout>

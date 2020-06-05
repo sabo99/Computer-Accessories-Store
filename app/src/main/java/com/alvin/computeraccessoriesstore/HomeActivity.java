@@ -169,6 +169,19 @@ public class HomeActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.home, menu);
+
+//        getMenuInflater().inflate(R.menu.account_menu, menu);
+//        View view = menu.findItem(R.id.account_menu).getActionView();
+//        CircleImageView civProfile = view.findViewById(R.id.civProfile);
+//
+//        StorageReference profileRef = storageReference.child(Common.USER_REF + "/" + firebaseUser.getUid() + "/profile.jpg");
+//        if (profileRef != null){
+//            profileRef.getDownloadUrl()
+//                    .addOnSuccessListener(uri -> {
+//                        Picasso.get().load(uri).into(civProfile);
+//                    });
+//        }
+
         return true;
     }
 
@@ -186,10 +199,10 @@ public class HomeActivity extends AppCompatActivity {
         countCartItem();
     }
 
-    public void account(MenuItem item) {
-        drawer.closeDrawers();
-        startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
-    }
+//    public void account(MenuItem item) {
+//        drawer.closeDrawers();
+//        startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
+//    }
 
     public void signout(MenuItem item) {
         drawer.closeDrawers();
