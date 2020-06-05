@@ -1,17 +1,21 @@
 package com.alvin.computeraccessoriesstore.EventBus;
 
+import com.alvin.computeraccessoriesstore.Model.Order;
+
+import java.util.List;
+
 public class RefreshViewOrderEvent {
-    private boolean success;
+    private boolean isRefresh;
 
-    public RefreshViewOrderEvent(boolean success) {
-        this.success = success;
+    public RefreshViewOrderEvent(boolean isRefresh) {
+        this.isRefresh = isRefresh;
     }
 
-    public boolean isSuccess() {
-        return success;
+    public boolean isRefresh() {
+        return isRefresh;
     }
 
-    public void setSuccess(boolean success) {
-        this.success = success;
+    public void setRefresh(boolean refresh) {
+        isRefresh = refresh;
     }
 }

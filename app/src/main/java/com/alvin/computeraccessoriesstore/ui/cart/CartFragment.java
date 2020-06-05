@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,7 +35,6 @@ import com.alvin.computeraccessoriesstore.Common.ILoadTimeFromFirebaseListener;
 import com.alvin.computeraccessoriesstore.Common.SwipeHelper;
 import com.alvin.computeraccessoriesstore.EventBus.CounterCartEvent;
 import com.alvin.computeraccessoriesstore.EventBus.HideFABCart;
-import com.alvin.computeraccessoriesstore.EventBus.RefreshCartEvent;
 import com.alvin.computeraccessoriesstore.EventBus.UpdateItemInCart;
 import com.alvin.computeraccessoriesstore.Model.Order;
 import com.alvin.computeraccessoriesstore.Model.UserModel;
@@ -112,7 +112,10 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
 
         ButterKnife.bind(this, root);
 
-        cartViewModel.initCartDataSource(getContext());
+        initViews();
+        getAllCartItems();
+
+        //cartViewModel.initCartDataSource(getContext());
         cartViewModel.getMutableLiveDataCartItems().observe(this, cartItems -> {
             adapter = new CartAdapter(getContext(), cartItems);
             if (cartItems == null || cartItems.isEmpty()) {
@@ -130,7 +133,7 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
             }
         });
 
-        initViews();
+
 
         return root;
     }
@@ -174,7 +177,6 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
                                             sumAllItemCart();
                                             // Update Counter FAB (COUNT)
                                             EventBus.getDefault().postSticky(new CounterCartEvent(true));
-                                            EventBus.getDefault().postSticky(new RefreshCartEvent(true));
                                             Toast.makeText(getContext(), "Remove item successful!", Toast.LENGTH_SHORT).show();
                                         }
 
@@ -189,6 +191,20 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
 
         // Sum Total Price
         sumAllItemCart();
+    }
+
+    private void getAllCartItems() {
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        compositeDisposable.add(cartDataSource.getAllCart(user.getUid())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(cartItems -> {
+                    cartViewModel.setMutableLiveDataCartItems(cartItems);
+                }, throwable -> {
+                    //mutableLiveDataCartItems.setValue(null);
+                    cartViewModel.setMutableLiveDataCartItems(null);
+                }));
     }
 
     private void sumAllItemCart() {
@@ -208,8 +224,10 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
 
                     @Override
                     public void onError(Throwable e) {
-                        if (e.getMessage().contains("Query returned empty"))
+                        if (e.getMessage().contains("Query returned empty")){
                             Toast.makeText(getContext(), "Cart is empty", Toast.LENGTH_SHORT).show();
+                            txt_empty_cart.setVisibility(View.VISIBLE);
+                        }
                         else
                             Toast.makeText(getContext(), "" + e.getMessage(), Toast.LENGTH_SHORT).show();
 
@@ -292,10 +310,7 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
     public void onStop() {
 
         // compositeDisposable clear
-        cartViewModel.onStop();
         compositeDisposable.clear();
-
-        //EventBus.getDefault().postSticky(new HideFABCart(true));
 
         EventBus.getDefault().unregister(this);
 
@@ -306,6 +321,7 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
     public void onResume() {
         super.onResume();
         EventBus.getDefault().postSticky(new HideFABCart(true));
+        getAllCartItems();
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)

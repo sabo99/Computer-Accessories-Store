@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Menu;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -18,8 +17,6 @@ import com.alvin.computeraccessoriesstore.Common.Common;
 import com.alvin.computeraccessoriesstore.EventBus.CounterCartEvent;
 import com.alvin.computeraccessoriesstore.EventBus.HideFABCart;
 import com.alvin.computeraccessoriesstore.EventBus.ItemsDetailClick;
-import com.alvin.computeraccessoriesstore.EventBus.RefreshCartEvent;
-import com.alvin.computeraccessoriesstore.EventBus.RefreshViewOrderEvent;
 import com.alvin.computeraccessoriesstore.EventBus.StoreItemClick;
 import com.alvin.computeraccessoriesstore.Model.UserModel;
 import com.alvin.computeraccessoriesstore.RoomDB.CartDataSource;
@@ -240,18 +237,6 @@ public class HomeActivity extends AppCompatActivity {
         if (event.isSuccess()){
             countCartItem();
         }
-    }
-
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    public void onRefreshRecyclerViewOrder(RefreshViewOrderEvent event){
-        if (event.isSuccess())
-            navController.navigate(R.id.nav_order);
-    }
-
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    public void onRefreshCart(RefreshCartEvent event){
-        if (event.isSuccess())
-            navController.navigate(R.id.nav_cart);
     }
 
     private void countCartItem() {

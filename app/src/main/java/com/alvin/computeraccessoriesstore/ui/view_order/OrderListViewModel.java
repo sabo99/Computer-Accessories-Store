@@ -17,61 +17,20 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderListViewModel extends ViewModel implements ILoadOrderCallbackListener {
+public class OrderListViewModel extends ViewModel {
 
     private MutableLiveData<List<Order>> mutableLiveDataOrderList;
-    private MutableLiveData<String> messageError;
-    private ILoadOrderCallbackListener listener;
-    private FirebaseAuth firebaseAuth;
-    private FirebaseUser user;
 
     public OrderListViewModel() {
-        listener = this;
-        firebaseAuth = FirebaseAuth.getInstance();
-        user = firebaseAuth.getCurrentUser();
+        mutableLiveDataOrderList = new MutableLiveData<>();
     }
 
     public MutableLiveData<List<Order>> getMutableLiveDataOrderList() {
-        if (mutableLiveDataOrderList == null){
-            mutableLiveDataOrderList = new MutableLiveData<>();
-            messageError = new MutableLiveData<>();
-            loadOrderFromFirebase();
-        }
         return mutableLiveDataOrderList;
     }
 
-    private void loadOrderFromFirebase() {
-        List<Order> orderList = new ArrayList<>();
-        FirebaseDatabase.getInstance().getReference(Common.ORDER_REF)
-                .orderByChild("email")
-                .equalTo(user.getEmail())
-                .limitToLast(100)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot ds:dataSnapshot.getChildren()){
-                            Order order = ds.getValue(Order.class);
-                            order.setOrderNumber(ds.getKey()); // Remember set it
-                            orderList.add(order);
-                        }
-
-                        listener.onLoadOrderSuccess(orderList);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        listener.onLoadOrderFailed(databaseError.getMessage());
-                    }
-                });
-    }
-
-    @Override
-    public void onLoadOrderSuccess(List<Order> orderList) {
+    public void setMutableLiveDataOrderList(List<Order> orderList) {
         mutableLiveDataOrderList.setValue(orderList);
     }
 
-    @Override
-    public void onLoadOrderFailed(String message) {
-        messageError.setValue(message);
-    }
 }

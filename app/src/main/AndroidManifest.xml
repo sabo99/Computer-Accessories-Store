@@ -31,7 +31,7 @@
             android:name=".HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTop"/>
         <activity
             android:name=".ProfileActivity"
             android:label="Profile"

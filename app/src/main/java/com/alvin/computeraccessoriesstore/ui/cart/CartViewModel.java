@@ -19,40 +19,17 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class CartViewModel extends ViewModel {
-    private CompositeDisposable compositeDisposable;
-    private CartDataSource cartDataSource;
     private MutableLiveData<List<CartItem>> mutableLiveDataCartItems;
 
     public CartViewModel() {
-        compositeDisposable = new CompositeDisposable();
-    }
-
-    public void initCartDataSource(Context context) {
-        cartDataSource = new LocalCartDataSource(CartDatabase.getInstance(context).cartDAO());
-    }
-
-    public void onStop() {
-        compositeDisposable.clear();
+        mutableLiveDataCartItems = new MutableLiveData<>();
     }
 
     public MutableLiveData<List<CartItem>> getMutableLiveDataCartItems() {
-        if (mutableLiveDataCartItems == null){
-            mutableLiveDataCartItems = new MutableLiveData<>();
-            getAllCartItems();
-        }
         return mutableLiveDataCartItems;
     }
 
-    private void getAllCartItems() {
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = firebaseAuth.getCurrentUser();
-        compositeDisposable.add(cartDataSource.getAllCart(user.getUid())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(cartItems -> {
-                    mutableLiveDataCartItems.setValue(cartItems);
-                }, throwable -> {
-                    mutableLiveDataCartItems.setValue(null);
-                }));
+    public void setMutableLiveDataCartItems(List<CartItem> cartItems) {
+     mutableLiveDataCartItems.setValue(cartItems);
     }
 }

@@ -1,9 +1,7 @@
 package com.alvin.computeraccessoriesstore.Adapter;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
@@ -17,18 +15,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alvin.computeraccessoriesstore.Common.Common;
-import com.alvin.computeraccessoriesstore.Common.IRecyclerClickListener;
 import com.alvin.computeraccessoriesstore.EventBus.RefreshViewOrderEvent;
 import com.alvin.computeraccessoriesstore.Model.Order;
 import com.alvin.computeraccessoriesstore.R;
 import com.alvin.computeraccessoriesstore.RoomDB.CartItem;
-import com.alvin.computeraccessoriesstore.ui.view_order.OrderListFragment;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -101,11 +95,9 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ViewHolder
                             .removeValue(new DatabaseReference.CompletionListener() {
                                 @Override
                                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                                    notifyItemRemoved(position);
-                                    notifyItemRangeRemoved(position, orderList.size());
+                                    EventBus.getDefault().postSticky(new RefreshViewOrderEvent(true));
                                     dialog1.dismiss();
                                     Toast.makeText(context, "Order Canceled", Toast.LENGTH_SHORT).show();
-                                    EventBus.getDefault().postSticky(new RefreshViewOrderEvent(true));
                                 }
                             });
                 }).create().show();
