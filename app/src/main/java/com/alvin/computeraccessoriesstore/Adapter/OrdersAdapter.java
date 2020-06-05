@@ -106,8 +106,6 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ViewHolder
                                     dialog1.dismiss();
                                     Toast.makeText(context, "Order Canceled", Toast.LENGTH_SHORT).show();
                                     EventBus.getDefault().postSticky(new RefreshViewOrderEvent(true));
-                                    //NavController navController = Navigation.findNavController((Activity) context, R.id.nav_host_fragment);
-                                    //navController.navigate(R.id.nav_order);
                                 }
                             });
                 }).create().show();

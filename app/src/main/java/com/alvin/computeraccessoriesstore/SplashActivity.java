@@ -25,18 +25,10 @@ public class SplashActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-//        new Handler().postDelayed(() -> {
-//            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-//            finish();
-//        }, 2000);
-
         splashAnimation();
     }
 
     private void splashAnimation() {
-//        Animation animation = AnimationUtils.loadAnimation(this, R.anim.top_to_bot);
-//        logoApp.startAnimation(animation);
-
 
         Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
         logoApp.startAnimation(fadeIn);

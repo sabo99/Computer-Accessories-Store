@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alvin.computeraccessoriesstore.Adapter.SliderAdapter;
 import com.alvin.computeraccessoriesstore.Adapter.StoreAdapter;
 import com.alvin.computeraccessoriesstore.Common.Common;
+import com.alvin.computeraccessoriesstore.EventBus.HideFABCart;
 import com.alvin.computeraccessoriesstore.HomeActivity;
 import com.alvin.computeraccessoriesstore.Model.UserModel;
 import com.alvin.computeraccessoriesstore.ProfileActivity;
@@ -40,6 +41,8 @@ import com.smarteist.autoimageslider.IndicatorAnimations;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
 import com.squareup.picasso.Picasso;
+
+import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -137,7 +140,6 @@ public class HomeFragment extends Fragment {
         inflater.inflate(R.menu.account_menu, menu);
         View view = menu.findItem(R.id.action_account_menu).getActionView();
         CircleImageView civProfile = view.findViewById(R.id.civProfile);
-
         civProfile.setOnClickListener(v -> {
             startActivity(new Intent(getContext(), ProfileActivity.class));
         });
@@ -159,5 +161,12 @@ public class HomeFragment extends Fragment {
         } else
             civProfile.setVisibility(View.VISIBLE);
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().invalidateOptionsMenu();
+        EventBus.getDefault().postSticky(new HideFABCart(false));
     }
 }

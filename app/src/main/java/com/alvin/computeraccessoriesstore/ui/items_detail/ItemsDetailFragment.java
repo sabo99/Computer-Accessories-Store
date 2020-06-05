@@ -216,7 +216,6 @@ public class ItemsDetailFragment extends Fragment {
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
                 if (scrollRange == -1) {
                     scrollRange = appBarLayout.getTotalScrollRange();
-                    //Toast.makeText(getContext(), String.valueOf(verticalOffset), Toast.LENGTH_SHORT).show();
                 }
                 if (scrollRange + verticalOffset == 0) {
                     rlTop.setVisibility(View.VISIBLE);

@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.alvin.computeraccessoriesstore.Adapter.OrdersAdapter;
 import com.alvin.computeraccessoriesstore.Common.Common;
 import com.alvin.computeraccessoriesstore.Common.ILoadOrderCallbackListener;
+import com.alvin.computeraccessoriesstore.EventBus.HideFABCart;
 import com.alvin.computeraccessoriesstore.Model.Order;
 import com.alvin.computeraccessoriesstore.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,6 +30,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,4 +94,9 @@ public class OrderListFragment extends Fragment {
         recycler_orders.setLayoutManager(layoutManager);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().postSticky(new HideFABCart(true));
+    }
 }

@@ -34,6 +34,7 @@ import com.alvin.computeraccessoriesstore.Common.ILoadTimeFromFirebaseListener;
 import com.alvin.computeraccessoriesstore.Common.SwipeHelper;
 import com.alvin.computeraccessoriesstore.EventBus.CounterCartEvent;
 import com.alvin.computeraccessoriesstore.EventBus.HideFABCart;
+import com.alvin.computeraccessoriesstore.EventBus.RefreshCartEvent;
 import com.alvin.computeraccessoriesstore.EventBus.UpdateItemInCart;
 import com.alvin.computeraccessoriesstore.Model.Order;
 import com.alvin.computeraccessoriesstore.Model.UserModel;
@@ -113,6 +114,7 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
 
         cartViewModel.initCartDataSource(getContext());
         cartViewModel.getMutableLiveDataCartItems().observe(this, cartItems -> {
+            adapter = new CartAdapter(getContext(), cartItems);
             if (cartItems == null || cartItems.isEmpty()) {
                 recycler_cart.setVisibility(View.GONE);
                 txt_text.setVisibility(View.GONE);
@@ -124,7 +126,6 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
                 group_place_holder.setVisibility(View.VISIBLE);
                 txt_empty_cart.setVisibility(View.GONE);
 
-                adapter = new CartAdapter(getContext(), cartItems);
                 recycler_cart.setAdapter(adapter);
             }
         });
@@ -173,6 +174,7 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
                                             sumAllItemCart();
                                             // Update Counter FAB (COUNT)
                                             EventBus.getDefault().postSticky(new CounterCartEvent(true));
+                                            EventBus.getDefault().postSticky(new RefreshCartEvent(true));
                                             Toast.makeText(getContext(), "Remove item successful!", Toast.LENGTH_SHORT).show();
                                         }
 
@@ -283,8 +285,7 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
     @Override
     public void onStart() {
         super.onStart();
-        if (!EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().register(this);
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -294,10 +295,9 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
         cartViewModel.onStop();
         compositeDisposable.clear();
 
-        EventBus.getDefault().postSticky(new HideFABCart(false));
+        //EventBus.getDefault().postSticky(new HideFABCart(true));
 
-        if (EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(this);
 
         super.onStop();
     }
@@ -398,44 +398,44 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
                 // Get Text
                 address = etAddress.getText().toString();
 
-                if (checkAddress(true, address)){
+                if (checkAddress(true, address)) {
 
                     compositeDisposable.add(cartDataSource.getAllCart(firebaseUser.getUid())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(cartItems -> {
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(cartItems -> {
 
-                        // getTotal Price
-                        cartDataSource.sumPriceInCart(firebaseUser.getUid())
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(new SingleObserver<Double>() {
-                                    @Override
-                                    public void onSubscribe(Disposable d) {
+                                // getTotal Price
+                                cartDataSource.sumPriceInCart(firebaseUser.getUid())
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(new SingleObserver<Double>() {
+                                            @Override
+                                            public void onSubscribe(Disposable d) {
 
-                                    }
+                                            }
 
-                                    @Override
-                                    public void onSuccess(Double totalPrice) {
-                                        double finalPrice = totalPrice;
-                                        Order order = new Order();
-                                        order.setName(tvName.getText().toString());
-                                        order.setEmail(tvEmail.getText().toString());
-                                        order.setAddress(address);
-                                        order.setCartItems(cartItems);
-                                        order.setTotalPayment(finalPrice);
-                                        order.setOrderStatus(1); // Status : Ordered
+                                            @Override
+                                            public void onSuccess(Double totalPrice) {
+                                                double finalPrice = totalPrice;
+                                                Order order = new Order();
+                                                order.setName(tvName.getText().toString());
+                                                order.setEmail(tvEmail.getText().toString());
+                                                order.setAddress(address);
+                                                order.setCartItems(cartItems);
+                                                order.setTotalPayment(finalPrice);
+                                                order.setOrderStatus(1); // Status : Ordered
 
-                                        createDate(order);
-                                        dialog.dismiss();
-                                    }
+                                                createDate(order);
+                                                dialog.dismiss();
+                                            }
 
-                                    @Override
-                                    public void onError(Throwable e) {
+                                            @Override
+                                            public void onError(Throwable e) {
 
-                                    }
-                                });
-                    }));
+                                            }
+                                        });
+                            }));
                 }
             });
         });
@@ -444,7 +444,7 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
 
     private boolean checkAddress(boolean check, String address) {
 
-        if (TextUtils.isEmpty(address) || address.equals("")){
+        if (TextUtils.isEmpty(address) || address.equals("")) {
             check = false;
             tilAddress.setHelperTextEnabled(true);
             tilAddress.setHelperText("Please Enter your address!");
@@ -452,10 +452,10 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
             tilAddress.setLayoutParams(paramsAddress);
 
         }
-        if (!TextUtils.isEmpty(address) || !address.equals("")){
+        if (!TextUtils.isEmpty(address) || !address.equals("")) {
             check = true;
             tilAddress.setHelperTextEnabled(false);
-            paramsAddress.setMargins(0,0,0,0);
+            paramsAddress.setMargins(0, 0, 0, 0);
             tilAddress.setLayoutParams(paramsAddress);
         }
 
@@ -473,7 +473,7 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
                 Date resultDate = new Date(estimatedServerTimeMs);
 
-                Log.d("OrderDate", ""+sdf.format(resultDate));
+                Log.d("OrderDate", "" + sdf.format(resultDate));
 
                 // Date to Long to Firebase
                 listener.onLoadTimeSuccess(order, estimatedServerTimeMs);
@@ -507,7 +507,7 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
                 .child(order.getOrderNumber())
                 .setValue(order)
                 .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 })
                 .addOnCompleteListener(task -> {
                     cartDataSource.cleanCart(firebaseUser.getUid())

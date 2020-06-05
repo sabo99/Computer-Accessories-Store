@@ -18,6 +18,7 @@ import com.alvin.computeraccessoriesstore.Common.Common;
 import com.alvin.computeraccessoriesstore.EventBus.CounterCartEvent;
 import com.alvin.computeraccessoriesstore.EventBus.HideFABCart;
 import com.alvin.computeraccessoriesstore.EventBus.ItemsDetailClick;
+import com.alvin.computeraccessoriesstore.EventBus.RefreshCartEvent;
 import com.alvin.computeraccessoriesstore.EventBus.RefreshViewOrderEvent;
 import com.alvin.computeraccessoriesstore.EventBus.StoreItemClick;
 import com.alvin.computeraccessoriesstore.Model.UserModel;
@@ -112,7 +113,6 @@ public class HomeActivity extends AppCompatActivity {
 
         initViewUser(navigationView);
 
-        //countCartItem();
     }
 
     private void initViewUser(NavigationView navigationView) {
@@ -161,28 +161,6 @@ public class HomeActivity extends AppCompatActivity {
                         Toast.makeText(HomeActivity.this, "Some error with database", Toast.LENGTH_SHORT).show();
                     }
                 });
-
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.home, menu);
-
-//        getMenuInflater().inflate(R.menu.account_menu, menu);
-//        View view = menu.findItem(R.id.account_menu).getActionView();
-//        CircleImageView civProfile = view.findViewById(R.id.civProfile);
-//
-//        StorageReference profileRef = storageReference.child(Common.USER_REF + "/" + firebaseUser.getUid() + "/profile.jpg");
-//        if (profileRef != null){
-//            profileRef.getDownloadUrl()
-//                    .addOnSuccessListener(uri -> {
-//                        Picasso.get().load(uri).into(civProfile);
-//                    });
-//        }
-
-        return true;
     }
 
     @Override
@@ -198,11 +176,6 @@ public class HomeActivity extends AppCompatActivity {
         initViewUser(navigationView);
         countCartItem();
     }
-
-//    public void account(MenuItem item) {
-//        drawer.closeDrawers();
-//        startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
-//    }
 
     public void signout(MenuItem item) {
         drawer.closeDrawers();
@@ -273,6 +246,12 @@ public class HomeActivity extends AppCompatActivity {
     public void onRefreshRecyclerViewOrder(RefreshViewOrderEvent event){
         if (event.isSuccess())
             navController.navigate(R.id.nav_order);
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onRefreshCart(RefreshCartEvent event){
+        if (event.isSuccess())
+            navController.navigate(R.id.nav_cart);
     }
 
     private void countCartItem() {

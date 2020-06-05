@@ -140,13 +140,6 @@ public class LoginActivity extends AppCompatActivity {
                 firebaseAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(task -> {
 
-//                            if (firebaseUser.isEmailVerified()){
-//                            }
-//                            else{
-//                                pbSignIn.setVisibility(View.INVISIBLE);
-//                                Toast.makeText(this, "Please Verified your account before login!", Toast.LENGTH_SHORT).show();
-//                            }
-
                             if (task.isSuccessful()) {
                                 pbSignIn.setVisibility(View.INVISIBLE);
                                 initClear();
@@ -178,15 +171,6 @@ public class LoginActivity extends AppCompatActivity {
             paramsEmail.setMargins(0, 0, 0, 0);
             tilEmail.setLayoutParams(paramsEmail);
         }
-
-//        if (password.length() < 6) {
-//            check = false;
-//            tilPassword.setHelperTextEnabled(true);
-//            tilPassword.setHelperText("Password must be >= 6 character!");
-//            tilPassword.setHelperTextColor(ColorStateList.valueOf(Color.RED));
-//            paramsPassword.setMargins(0, 0, 0, 50);
-//            tilPassword.setLayoutParams(paramsPassword);
-//        }
 
         if (password.length() >= 6) {
             check = true;
@@ -255,8 +239,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        //getSupportActionBar().setTitle("Sign In");
 
         ButterKnife.bind(this);
         pbSignIn.setVisibility(View.INVISIBLE);

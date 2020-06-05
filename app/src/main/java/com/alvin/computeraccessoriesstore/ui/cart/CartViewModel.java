@@ -36,9 +36,10 @@ public class CartViewModel extends ViewModel {
     }
 
     public MutableLiveData<List<CartItem>> getMutableLiveDataCartItems() {
-        if (mutableLiveDataCartItems == null)
+        if (mutableLiveDataCartItems == null){
             mutableLiveDataCartItems = new MutableLiveData<>();
-        getAllCartItems();
+            getAllCartItems();
+        }
         return mutableLiveDataCartItems;
     }
 
