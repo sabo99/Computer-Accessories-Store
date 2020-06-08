@@ -36,6 +36,7 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.ms.square.android.expandabletextview.ExpandableTextView;
+import com.ontbee.legacyforks.cn.pedant.SweetAlert.SweetAlertDialog;
 import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
@@ -129,7 +130,7 @@ public class ItemsDetailFragment extends Fragment {
                                         @Override
                                         public void onSuccess(Integer integer) {
                                             Log.d("s", integer.toString());
-                                            Toast.makeText(getContext(), "Update Cart success", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getContext(), "Update Cart", Toast.LENGTH_SHORT).show();
                                             EventBus.getDefault().postSticky(new CounterCart(true));
                                         }
 
@@ -144,7 +145,7 @@ public class ItemsDetailFragment extends Fragment {
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe(() -> {
-                                        Toast.makeText(getContext(), "Add to Cart success", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), "Add to Cart", Toast.LENGTH_SHORT).show();
                                         EventBus.getDefault().postSticky(new CounterCart(true));
                                     }, throwable -> {
                                         Toast.makeText(getContext(), "[CART ERROR]" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
@@ -160,7 +161,7 @@ public class ItemsDetailFragment extends Fragment {
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe(() -> {
-                                        Toast.makeText(getContext(), "Add to Cart success", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), "Add to Cart", Toast.LENGTH_SHORT).show();
                                         EventBus.getDefault().postSticky(new CounterCart(true));
                                     }, throwable -> {
                                         Toast.makeText(getContext(), "[CART ERROR]" + throwable.getMessage(), Toast.LENGTH_SHORT).show();

@@ -162,9 +162,9 @@ public class LoginActivity extends AppCompatActivity {
                             } else {
                                 pbSignIn.setVisibility(View.INVISIBLE);
                                 //Toast.makeText(this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                new SweetAlertDialog(LoginActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                new SweetAlertDialog(LoginActivity.this, SweetAlertDialog.WARNING_TYPE)
                                         .setTitleText("Oops...")
-                                        .setContentText("Something went wrong!")
+                                        .setContentText(task.getException().getMessage())
                                         .show();
                                 Log.d("task", task.getException().getMessage());
                             }
@@ -172,10 +172,6 @@ public class LoginActivity extends AppCompatActivity {
                         })
                         .addOnFailureListener(e -> {
                             pbSignIn.setVisibility(View.INVISIBLE);
-                            new SweetAlertDialog(LoginActivity.this, SweetAlertDialog.ERROR_TYPE)
-                                    .setTitleText("Oops...")
-                                    .setContentText("Something went wrong!")
-                                    .show();
                             Log.d("error", e.getMessage());
                         });
             }

@@ -382,7 +382,7 @@ public class ProfileActivity extends AppCompatActivity {
                                         .addOnFailureListener(e -> {
                                             new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
                                                     .setTitleText("Oops...")
-                                                    .setContentText("Password Reset Failed!")
+                                                    .setContentText("Something went wrong! \n Please Re-Login!")
                                                     .show();
                                             //Toast.makeText(this, "Password Reset Failed!", Toast.LENGTH_SHORT).show();
                                             Log.d("Tag", e.getMessage());
@@ -525,7 +525,11 @@ public class ProfileActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Toast.makeText(ProfileActivity.this, "Some error with database", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(ProfileActivity.this, "Some error with database", Toast.LENGTH_SHORT).show();
+                        new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                .setTitleText("Oops...")
+                                .setConfirmText("Something went wrong!")
+                                .show();
                         Log.d("userRef", databaseError.getMessage());
                     }
                 });
@@ -550,7 +554,7 @@ public class ProfileActivity extends AppCompatActivity {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.setTitleText("Success!")
-                                .setContentText("Verification Email has been sent. You must be logout and verify email first!")
+                                .setContentText("Verification Email has been sent. \nYou must be logout and verify email first!")
                                 .setConfirmText("Continue")
                                 .showCancelButton(false)
                                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {

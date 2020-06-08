@@ -120,7 +120,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
 
                                             @Override
                                             public void onSuccess(Integer integer) {
-                                                Toast.makeText(context, "Update Cart success", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(context, "Update Cart", Toast.LENGTH_SHORT).show();
                                                 EventBus.getDefault().postSticky(new CounterCart(true));
                                             }
 
@@ -136,7 +136,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
                                         .subscribeOn(Schedulers.io())
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribe(() ->{
-                                            Toast.makeText(context, "Add to Cart success", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context, "Add to Cart", Toast.LENGTH_SHORT).show();
                                             EventBus.getDefault().postSticky(new CounterCart(true));
                                         }, throwable -> {
                                             Toast.makeText(context, "[CART ERROR]"+throwable.getMessage(), Toast.LENGTH_SHORT).show();
@@ -153,7 +153,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
                                         .subscribeOn(Schedulers.io())
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribe(() ->{
-                                            Toast.makeText(context, "Add to Cart success", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context, "Add to Cart", Toast.LENGTH_SHORT).show();
                                             EventBus.getDefault().postSticky(new CounterCart(true));
                                         }, throwable -> {
                                             Toast.makeText(context, "[CART ERROR]"+throwable.getMessage(), Toast.LENGTH_SHORT).show();

@@ -561,10 +561,17 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
                                 public void onSuccess(Integer integer) {
                                     EventBus.getDefault().postSticky(new CounterCart(true));
                                     EventBus.getDefault().postSticky(new CounterViewOrder(true));
-                                    txt_empty_cart.setVisibility(View.VISIBLE);
+
                                     new SweetAlertDialog(getContext(), SweetAlertDialog.SUCCESS_TYPE)
                                             .setTitleText("Success")
                                             .setContentText("Order placed Successfully!")
+                                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                @Override
+                                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                                    txt_empty_cart.setVisibility(View.VISIBLE);
+                                                    sweetAlertDialog.dismissWithAnimation();
+                                                }
+                                            })
                                             .show();
                                     //Toast.makeText(getContext(), "Order placed Successfully", Toast.LENGTH_SHORT).show();
                                 }
