@@ -2,12 +2,10 @@ package com.alvin.computeraccessoriesstore;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,23 +19,18 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alvin.computeraccessoriesstore.Common.Common;
 import com.alvin.computeraccessoriesstore.Model.UserModel;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthSettings;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -46,10 +39,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+import com.ontbee.legacyforks.cn.pedant.SweetAlert.SweetAlertDialog;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -62,8 +54,9 @@ import io.supercharge.shimmerlayout.ShimmerLayout;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    AlertDialog.Builder builder, builderUpdate;
-    AlertDialog dialog, dialogUpdate;
+    AlertDialog.Builder builder;
+    AlertDialog dialog;
+    SweetAlertDialog sweetAlertDialog;
 
     DatabaseReference userRef;
     StorageReference storageReference;
@@ -110,20 +103,20 @@ public class ProfileActivity extends AppCompatActivity {
         if (!firebaseUser.isEmailVerified()) {
             pbUploadImage.setVisibility(View.INVISIBLE);
 
-            builder = new AlertDialog.Builder(this).setCancelable(false);
-            builder.setTitle("Email is not Verified!")
-                    .setMessage("Please verified your account, before change photo profile!")
-                    .setPositiveButton("Continue", (dialog1, which) -> {
-                      dialog1.dismiss();
-                    });
-            dialog = builder.create();
-            dialog.show();
-            displayDialog(dialog);
-
+            new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("Email is not Verified!")
+                    .setContentText("Please verified your account, before change photo profile!")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismissWithAnimation();
+                        }
+                    })
+                    .show();
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                 requestPermissions(new String[]{
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, Common.REQUEST_WRITE_PERMISSION);
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, Common.REQUEST_WRITE_PERMISSION_GALLERY);
         }
     }
 
@@ -138,7 +131,7 @@ public class ProfileActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == Common.REQUEST_WRITE_PERMISSION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == Common.REQUEST_WRITE_PERMISSION_GALLERY && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             chooseFile();
         } else
             pbUploadImage.setVisibility(View.INVISIBLE);
@@ -155,7 +148,7 @@ public class ProfileActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 imageUri = result.getUri();
                 uploadImageToFirebase(imageUri);
-                showLoadingUpload();
+                showSweetAlertDialog();
             } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception e = result.getError();
                 pbUploadImage.setVisibility(View.INVISIBLE);
@@ -166,11 +159,12 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
-    private void showLoadingUpload() {
-        View view = LayoutInflater.from(this).inflate(R.layout.layout_upload_loading, null);
-        builder = new AlertDialog.Builder(this).setCancelable(false).setView(view);
-        dialog = builder.create();
-        dialog.show();
+    private void showSweetAlertDialog() {
+        sweetAlertDialog = new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.PROGRESS_TYPE);
+        sweetAlertDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.colorPrimary));
+        sweetAlertDialog.setTitleText("Uploading...");
+        sweetAlertDialog.setCancelable(false);
+        sweetAlertDialog.show();
     }
 
 
@@ -182,19 +176,26 @@ public class ProfileActivity extends AppCompatActivity {
                     fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
                         Picasso.get().load(uri).into(imgPhoto);
                         pbUploadImage.setVisibility(View.INVISIBLE);
-                        dialog.dismiss();
+
+                        sweetAlertDialog.dismiss();
+                        new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
+                                .setTitleText("Success")
+                                .setContentText("Image Upload Success")
+                                .show();
 
                         // File Path Image or Link Image
                         filePath = uri.toString();
                         Log.d("url", filePath);
 
                     });
-                    Toast.makeText(this, "Image Upload Success.", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Failed!", Toast.LENGTH_SHORT).show();
+                    sweetAlertDialog.dismiss();
+                    new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText("Oops...")
+                            .setContentText("Something went wrong!")
+                            .show();
                     pbUploadImage.setVisibility(View.INVISIBLE);
-                    dialog.dismiss();
                 });
 
     }
@@ -207,15 +208,17 @@ public class ProfileActivity extends AppCompatActivity {
         if (!firebaseUser.isEmailVerified()) {
             pbUploadImage.setVisibility(View.INVISIBLE);
 
-            builder = new AlertDialog.Builder(this).setCancelable(false);
-            builder.setTitle("Email is not Verified!")
-                    .setMessage("Please verified your account, before edit profile!")
-                    .setPositiveButton("Continue", (dialog1, which) -> {
-                       dialog1.dismiss();
-                    });
-            dialog = builder.create();
-            dialog.show();
-            displayDialog(dialog);
+            new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("Email is not Verified!")
+                    .setContentText("Please verified your account, before edit profile!")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismissWithAnimation();
+                        }
+                    })
+                    .show();
+
         } else {
             View view = LayoutInflater.from(this).inflate(R.layout.layout_profile_edit, null);
             builder = new AlertDialog.Builder(this).setCancelable(false).setView(view);
@@ -253,20 +256,27 @@ public class ProfileActivity extends AppCompatActivity {
                         updateData.put(Common.F_PHONE, phone);
 
 
-                        builderUpdate = new AlertDialog.Builder(ProfileActivity.this).setCancelable(false);
-                        builderUpdate.setTitle("Update User Profile")
-                                .setMessage("Are you sure change this profile?")
-                                .setPositiveButton("OK", (dialog1, which) -> {
-                                    dialog1.dismiss();
-                                    dialog.dismiss();
-                                    updateUserProfile(updateData);
+                        new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText("Update User Profile")
+                                .setContentText("Are you sure change this profile?")
+                                .setConfirmText("OK")
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        dialog.dismiss();
+                                        sweetAlertDialog.dismissWithAnimation();
+                                        updateUserProfile(updateData);
+                                    }
                                 })
-                                .setNegativeButton("CANCEL", (dialog1, which) -> {
-                                    dialog1.dismiss();
-                                    pbUploadImage.setVisibility(View.INVISIBLE);
-                                });
-                        dialogUpdate = builderUpdate.create();
-                        dialogUpdate.show();
+                                .setCancelText("Cancel")
+                                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        sweetAlertDialog.dismissWithAnimation();
+                                        pbUploadImage.setVisibility(View.INVISIBLE);
+                                    }
+                                })
+                                .show();
                     }
                 });
             });
@@ -280,12 +290,17 @@ public class ProfileActivity extends AppCompatActivity {
         userRef.child(firebaseUser.getUid())
                 .updateChildren(updateData)
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     pbUploadImage.setVisibility(View.INVISIBLE);
-                    dialog.dismiss();
+                    new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText("Oops...")
+                            .setContentText("Something went wrong!")
+                            .show();
                 })
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Updated Successfully.", Toast.LENGTH_SHORT).show();
+                    new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
+                            .setTitleText("Success")
+                            .setContentText("Updated Successfully!")
+                            .show();
                     pbUploadImage.setVisibility(View.INVISIBLE);
                 });
     }
@@ -306,15 +321,17 @@ public class ProfileActivity extends AppCompatActivity {
         if (!firebaseUser.isEmailVerified()) {
             pbUploadImage.setVisibility(View.INVISIBLE);
 
-            builder = new AlertDialog.Builder(this).setCancelable(false);
-            builder.setTitle("Email is not Verified!")
-                    .setMessage("Please verified your account, before reset password!")
-                    .setPositiveButton("Continue", (dialog1, which) -> {
-                        dialog1.dismiss();
-                    });
-            dialog = builder.create();
-            dialog.show();
-            displayDialog(dialog);
+            new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("Email is not Verified!")
+                    .setContentText("Please verified your account, before reset password!")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismissWithAnimation();
+                        }
+                    })
+                    .show();
+
 
         } else {
             View view = LayoutInflater.from(this).inflate(R.layout.layout_resetpassword, null);
@@ -351,16 +368,23 @@ public class ProfileActivity extends AppCompatActivity {
                     String newPassword = etResetPasswordNew.getText().toString();
                     if (checkPassword(true, oldPassword, newPassword)) {
                         if (checkNewPassword(true, oldPassword, newPassword)) {
-                            firebaseUser = firebaseAuth.getCurrentUser();
                             if (firebaseUser != null) {
                                 firebaseUser.updatePassword(newPassword)
                                         .addOnSuccessListener(aVoid -> {
-                                            Toast.makeText(this, "Password Reset Successfully", Toast.LENGTH_SHORT).show();
+                                            new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
+                                                    .setTitleText("Success")
+                                                    .setContentText("Password Reset Successfully!")
+                                                    .show();
+                                            //Toast.makeText(this, "Password Reset Successfully", Toast.LENGTH_SHORT).show();
                                             dialog.dismiss();
                                             pbUploadImage.setVisibility(View.INVISIBLE);
                                         })
                                         .addOnFailureListener(e -> {
-                                            Toast.makeText(this, "Password Reset Failed!", Toast.LENGTH_SHORT).show();
+                                            new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
+                                                    .setTitleText("Oops...")
+                                                    .setContentText("Password Reset Failed!")
+                                                    .show();
+                                            //Toast.makeText(this, "Password Reset Failed!", Toast.LENGTH_SHORT).show();
                                             Log.d("Tag", e.getMessage());
                                             dialog.dismiss();
                                             pbUploadImage.setVisibility(View.INVISIBLE);
@@ -418,29 +442,37 @@ public class ProfileActivity extends AppCompatActivity {
 
     @OnClick(R.id.btnSignOut)
     void signOut() {
-        builder = new AlertDialog.Builder(this).setCancelable(false);
-        builder.setMessage("Change Account?")
-                .setNegativeButton("NO", (dialog1, which) -> {
-                    dialog1.dismiss();
+
+        new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
+                .setTitleText("Change Account")
+                .setContentText("Do you really want to change account?")
+                .setCustomImage(R.drawable.ic_account_circle_black_24dp)
+                .setConfirmText("Yes")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                        // Clear Model
+                        Common.currentUser = null;
+                        Common.storeItemsSelected = null;
+                        Common.selectedItems = null;
+                        // Sign Out
+                        firebaseAuth.signOut();
+                        Intent i = new Intent(ProfileActivity.this, LoginActivity.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(i);
+                        finish();
+                    }
                 })
-                .setPositiveButton("YES", (dialog1, which) -> {
-                    dialog1.dismiss();
-                    // Clear Model
-                    Common.currentUser = null;
-                    Common.storeItemsSelected = null;
-                    Common.selectedItems = null;
-                    // Sign Out
-                    firebaseAuth.signOut();
-                    startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
-                    finish();
-
-                });
-        dialog = builder.create();
-        dialog.show();
-
-        Button btnPos;
-        btnPos = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        btnPos.setTextColor(Color.RED);
+                .setCancelText("No")
+                .showCancelButton(true)
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                    }
+                })
+                .show();
     }
 
     @Override
@@ -509,46 +541,40 @@ public class ProfileActivity extends AppCompatActivity {
     
     @OnClick(R.id.tvVerify)
     void onVerifyEmail(){
-        builder = new AlertDialog.Builder(this).setCancelable(false);
-        builder.setTitle("Email Verification")
-                .setMessage("Verification Email has been sent. You must be logout and verify email first")
-                .setPositiveButton("Continue", (dialog1, which) -> {
-                    firebaseUser.sendEmailVerification();
-                    firebaseAuth.signOut();
-                    startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
-                    finish();
-                    dialog1.dismiss();
-                });
-        dialog = builder.create();
-        dialog.show();
-        displayDialog(dialog);
+
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("Email Verification")
+                .setContentText("Are you sure sent the link verification email?")
+                .setConfirmText("Yes")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.setTitleText("Success!")
+                                .setContentText("Verification Email has been sent. You must be logout and verify email first!")
+                                .setConfirmText("Continue")
+                                .showCancelButton(false)
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        sweetAlertDialog.dismissWithAnimation();
+                                        firebaseUser.sendEmailVerification();
+                                        firebaseAuth.signOut();
+                                        startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
+                                        finish();
+                                    }
+                                })
+                                .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+
+                    }
+                })
+                .setCancelText("No")
+                .showCancelButton(true)
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                    }
+                })
+                .show();
     }
-
-    private void displayDialog(AlertDialog dialog) {
-
-        Button pos;
-        TextView title, message;
-        LinearLayout.LayoutParams paramsButton =
-                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT);
-
-        LinearLayout.LayoutParams paramMessage =
-                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT);
-
-        title = this.dialog.findViewById(getResources().getIdentifier("alertTitle", "id", "android"));
-        title.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-
-        message = this.dialog.findViewById(android.R.id.message);
-        paramMessage.setMargins(0, 20, 0, 0);
-        message.setLayoutParams(paramMessage);
-        message.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-
-        pos = this.dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-
-        paramsButton.setMargins(0, 0, 0, 20);
-        paramsButton.gravity = Gravity.CENTER;
-        pos.setLayoutParams(paramsButton);
-    }
-
 }

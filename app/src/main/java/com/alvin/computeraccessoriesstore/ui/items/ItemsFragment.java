@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alvin.computeraccessoriesstore.Adapter.ItemsAdapter;
 import com.alvin.computeraccessoriesstore.Common.Common;
+import com.alvin.computeraccessoriesstore.EventBus.HideBadgeCart;
+import com.alvin.computeraccessoriesstore.EventBus.HideCivProfile;
 import com.alvin.computeraccessoriesstore.EventBus.HideFABCart;
 import com.alvin.computeraccessoriesstore.R;
 
@@ -60,19 +62,10 @@ public class ItemsFragment extends Fragment {
     }
 
     @Override
-    public void onStop() {
-        EventBus.getDefault().postSticky(new HideFABCart(false));
-
-        if (EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().unregister(this);
-
-        super.onStop();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         EventBus.getDefault().postSticky(new HideFABCart(true));
-
+        EventBus.getDefault().postSticky(new HideBadgeCart(false));
+        EventBus.getDefault().postSticky(new HideCivProfile(true));
     }
 }

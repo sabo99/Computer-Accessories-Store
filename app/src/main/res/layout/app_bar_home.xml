@@ -19,7 +19,39 @@
             android:background="@color/colorPrimary"
             android:theme="@style/ToolbarColoredBackArrow"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:titleTextColor="@android:color/white" />
+            app:titleTextColor="@android:color/white">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:layout_gravity="right">
+
+                <RelativeLayout
+                    android:id="@+id/rl_action_cart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <include layout="@layout/action_bar_notification_cart"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_action_profile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <include layout="@layout/action_bar_account"/>
+
+                </RelativeLayout>
+
+
+
+
+            </RelativeLayout>
+
+
+        </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -33,6 +65,8 @@
         android:layout_margin="@dimen/fab_margin"
         android:backgroundTint="@android:color/white"
         app:backgroundTint="@color/colorPrimaryDark"
+        app:badgeBackgroundColor="@android:color/holo_red_light"
+        app:rippleColor="@color/colorAccent"
         app:srcCompat="@drawable/ic_shopping_cart_black_24dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

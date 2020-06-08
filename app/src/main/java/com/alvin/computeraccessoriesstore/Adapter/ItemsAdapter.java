@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alvin.computeraccessoriesstore.Common.Common;
 import com.alvin.computeraccessoriesstore.Common.IRecyclerClickListener;
-import com.alvin.computeraccessoriesstore.EventBus.CounterCartEvent;
+import com.alvin.computeraccessoriesstore.EventBus.CounterCart;
 import com.alvin.computeraccessoriesstore.EventBus.ItemsDetailClick;
 import com.alvin.computeraccessoriesstore.HomeActivity;
 import com.alvin.computeraccessoriesstore.Model.ItemsModel;
@@ -121,7 +121,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
                                             @Override
                                             public void onSuccess(Integer integer) {
                                                 Toast.makeText(context, "Update Cart success", Toast.LENGTH_SHORT).show();
-                                                EventBus.getDefault().postSticky(new CounterCartEvent(true));
+                                                EventBus.getDefault().postSticky(new CounterCart(true));
                                             }
 
                                             @Override
@@ -137,7 +137,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribe(() ->{
                                             Toast.makeText(context, "Add to Cart success", Toast.LENGTH_SHORT).show();
-                                            EventBus.getDefault().postSticky(new CounterCartEvent(true));
+                                            EventBus.getDefault().postSticky(new CounterCart(true));
                                         }, throwable -> {
                                             Toast.makeText(context, "[CART ERROR]"+throwable.getMessage(), Toast.LENGTH_SHORT).show();
                                         }));
@@ -154,7 +154,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribe(() ->{
                                             Toast.makeText(context, "Add to Cart success", Toast.LENGTH_SHORT).show();
-                                            EventBus.getDefault().postSticky(new CounterCartEvent(true));
+                                            EventBus.getDefault().postSticky(new CounterCart(true));
                                         }, throwable -> {
                                             Toast.makeText(context, "[CART ERROR]"+throwable.getMessage(), Toast.LENGTH_SHORT).show();
                                         }));

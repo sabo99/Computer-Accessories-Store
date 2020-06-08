@@ -28,6 +28,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
+import com.ontbee.legacyforks.cn.pedant.SweetAlert.SweetAlertDialog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,8 +38,7 @@ import static android.text.Html.fromHtml;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    AlertDialog.Builder builder;
-    AlertDialog dialog;
+    SweetAlertDialog sweetAlertDialog;
 
     FirebaseAuth firebaseAuth;
     FirebaseUser firebaseUser;
@@ -89,6 +89,7 @@ public class RegisterActivity extends AppCompatActivity {
     void signUp() {
 
         pbSignUp.setVisibility(View.VISIBLE);
+        sweetAlertDialog.show();
 
         // Get Text
         name = etName.getText().toString();
@@ -123,65 +124,54 @@ public class RegisterActivity extends AppCompatActivity {
                                         .addOnFailureListener(e -> {
                                             pbSignUp.setVisibility(View.INVISIBLE);
                                             Log.d("error", e.getMessage());
+                                            new SweetAlertDialog(RegisterActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                                    .setTitleText("Oops...")
+                                                    .setContentText("Something went wrong!")
+                                                    .show();
                                         })
                                         .addOnSuccessListener(aVoid -> {
 
                                             // Send Verification Email
                                             firebaseUser.sendEmailVerification();
 
-                                            builder = new AlertDialog.Builder(RegisterActivity.this).setCancelable(false);
-                                            builder.setTitle("Sign Up Successfully!")
-                                                    .setMessage("Verification Email has been sent.")
-                                                    .setPositiveButton("Continue", (dialog1, which) -> {
-                                                        dialog1.dismiss();
-                                                        initClear();
-                                                        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-                                                    });
-                                            dialog = builder.create();
-                                            dialog.show();
-
                                             pbSignUp.setVisibility(View.INVISIBLE);
-                                            displayDialog(dialog);
+
+                                            sweetAlertDialog.dismissWithAnimation();
+                                            new SweetAlertDialog(RegisterActivity.this, SweetAlertDialog.SUCCESS_TYPE)
+                                                    .setTitleText("Sign Up Successfully!")
+                                                    .setContentText("Verification Email has been sent.")
+                                                    .setConfirmText("Continue")
+                                                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                        @Override
+                                                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                                            initClear();
+                                                            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                                                        }
+                                                    })
+                                                    .show();
+
 
                                         });
                             } else {
+                                sweetAlertDialog.dismissWithAnimation();
+                                new SweetAlertDialog(RegisterActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                        .setTitleText("Oops...")
+                                        .setContentText("Something went wrong!")
+                                        .show();
                                 Toast.makeText(this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
                             pbSignUp.setVisibility(View.INVISIBLE);
                         })
                         .addOnFailureListener(e -> {
                             Log.d("error", e.getMessage());
+                            new SweetAlertDialog(RegisterActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                    .setTitleText("Oops...")
+                                    .setContentText("Something went wrong!")
+                                    .show();
                             pbSignUp.setVisibility(View.INVISIBLE);
                         });
             }
         }
-    }
-
-    private void displayDialog(AlertDialog dialog) {
-
-        Button pos;
-        TextView title, message;
-        LinearLayout.LayoutParams paramsButton =
-                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT);
-
-        LinearLayout.LayoutParams paramMessage =
-                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT);
-
-        title = this.dialog.findViewById(getResources().getIdentifier("alertTitle", "id", "android"));
-        title.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-
-        message = this.dialog.findViewById(android.R.id.message);
-        paramMessage.setMargins(0, 20, 0, 0);
-        message.setLayoutParams(paramMessage);
-        message.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-
-        pos = this.dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-
-        paramsButton.setMargins(0, 0, 0, 20);
-        paramsButton.gravity = Gravity.CENTER;
-        pos.setLayoutParams(paramsButton);
     }
 
     private boolean checkPattern(boolean check, String email, String password, String confirmPass) {
@@ -370,5 +360,14 @@ public class RegisterActivity extends AppCompatActivity {
 
         tvSignIn.setText(fromHtml("<font color='#000000'>Already have an account? " +
                 "</font><font color='#0099cc'>Sign In</font>"));
+
+        initSweetAlertDialog();
+    }
+
+    private void initSweetAlertDialog() {
+        sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+        sweetAlertDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.colorPrimary));
+        sweetAlertDialog.setTitleText("Loading");
+        sweetAlertDialog.setCancelable(false);
     }
 }

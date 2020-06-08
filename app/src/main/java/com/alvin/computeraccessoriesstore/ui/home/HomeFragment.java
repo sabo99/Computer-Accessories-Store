@@ -4,13 +4,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -20,40 +16,30 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alvin.computeraccessoriesstore.Adapter.SliderAdapter;
 import com.alvin.computeraccessoriesstore.Adapter.StoreAdapter;
-import com.alvin.computeraccessoriesstore.Common.Common;
+import com.alvin.computeraccessoriesstore.EventBus.HideBadgeCart;
+import com.alvin.computeraccessoriesstore.EventBus.HideCivProfile;
 import com.alvin.computeraccessoriesstore.EventBus.HideFABCart;
-import com.alvin.computeraccessoriesstore.HomeActivity;
-import com.alvin.computeraccessoriesstore.Model.UserModel;
-import com.alvin.computeraccessoriesstore.ProfileActivity;
 import com.alvin.computeraccessoriesstore.R;
 import com.alvin.computeraccessoriesstore.SearchActivity;
-import com.github.ivbaranov.mli.MaterialLetterIcon;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.smarteist.autoimageslider.IndicatorAnimations;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
-import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class HomeFragment extends Fragment {
 
     FirebaseAuth firebaseAuth;
     FirebaseUser firebaseUser;
-    StorageReference storageReference;
+    StorageReference storageReference, profileRef;
 
     private HomeViewModel homeViewModel;
 
@@ -65,7 +51,6 @@ public class HomeFragment extends Fragment {
     SliderView sliderView;
     @BindView(R.id.pbSlider)
     ProgressBar progressBar2;
-
 
     @OnClick(R.id.rl_action_search)
     void onSearchItem() {
@@ -80,7 +65,7 @@ public class HomeFragment extends Fragment {
 
         ButterKnife.bind(this, root);
 
-        init();
+        initViews();
 
         homeViewModel.getStoreList().observe(this, storeModelList -> {
             StoreAdapter adapter = new StoreAdapter(getContext(), storeModelList);
@@ -110,7 +95,7 @@ public class HomeFragment extends Fragment {
         return root;
     }
 
-    private void init() {
+    private void initViews() {
 
         setHasOptionsMenu(true);
 
@@ -136,37 +121,10 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.account_menu, menu);
-        View view = menu.findItem(R.id.action_account_menu).getActionView();
-        CircleImageView civProfile = view.findViewById(R.id.civProfile);
-        civProfile.setOnClickListener(v -> {
-            startActivity(new Intent(getContext(), ProfileActivity.class));
-        });
-
-        // InitViews
-        initViewsImage(civProfile);
-
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    private void initViewsImage(CircleImageView civProfile) {
-        StorageReference profileRef = storageReference.child(Common.USER_REF + "/" + firebaseUser.getUid() + "/profile.jpg");
-        if (profileRef != null) {
-            profileRef.getDownloadUrl()
-                    .addOnSuccessListener(uri -> {
-                        civProfile.setVisibility(View.VISIBLE);
-                        Picasso.get().load(uri).into(civProfile);
-                    });
-        } else
-            civProfile.setVisibility(View.VISIBLE);
-
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
-        getActivity().invalidateOptionsMenu();
         EventBus.getDefault().postSticky(new HideFABCart(false));
+        EventBus.getDefault().postSticky(new HideBadgeCart(true));
+        EventBus.getDefault().postSticky(new HideCivProfile(false));
     }
 }

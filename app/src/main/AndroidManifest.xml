@@ -17,7 +17,7 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".SearchActivity"
-            android:parentActivityName=".HomeActivity" />
+            android:theme="@style/AppTheme.Light.NoActionBar"/>
         <activity
             android:name=".SplashActivity"
             android:theme="@style/Splash">
@@ -36,17 +36,17 @@
             android:name=".ProfileActivity"
             android:label="Profile"
             android:parentActivityName=".HomeActivity"
-            android:theme="@style/LoginRegister" />
+            android:theme="@style/AppTheme.Light.NoActionBar" />
         <activity
             android:name=".RegisterActivity"
             android:label="Sign Up"
             android:launchMode="singleInstance"
             android:parentActivityName=".LoginActivity"
-            android:theme="@style/LoginRegister" />
+            android:theme="@style/AppTheme.Light.NoActionBar" />
         <activity
             android:name=".LoginActivity"
             android:launchMode="singleInstance"
-            android:theme="@style/LoginRegister" />
+            android:theme="@style/AppTheme.Light.NoActionBar" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />

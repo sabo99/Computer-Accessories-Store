@@ -4,10 +4,10 @@ import com.alvin.computeraccessoriesstore.Model.Order;
 
 import java.util.List;
 
-public class RefreshViewOrderEvent {
+public class RefreshViewOrder {
     private boolean isRefresh;
 
-    public RefreshViewOrderEvent(boolean isRefresh) {
+    public RefreshViewOrder(boolean isRefresh) {
         this.isRefresh = isRefresh;
     }
 

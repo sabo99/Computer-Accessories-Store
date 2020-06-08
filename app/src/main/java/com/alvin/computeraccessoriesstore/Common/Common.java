@@ -1,8 +1,17 @@
 package com.alvin.computeraccessoriesstore.Common;
 
+import android.graphics.Typeface;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
+import android.widget.TextView;
+
 import com.alvin.computeraccessoriesstore.Model.ItemsModel;
 import com.alvin.computeraccessoriesstore.Model.StoreModel;
 import com.alvin.computeraccessoriesstore.Model.UserModel;
+import com.alvin.computeraccessoriesstore.RoomDB.LocalCartDataSource;
+import com.nex3z.notificationbadge.NotificationBadge;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -18,10 +27,10 @@ public class Common {
     public static final String F_EMAIL = "email";
     public static final String F_PHONE = "phone";
     public static final String F_IMAGE = "image";
+    public static final String F_ID = "id";
     public static final String CHILD_ITEMS = "items";
 
-    //public static final int REQUEST_GALLERY_CODE = 1000;
-    public static final int REQUEST_WRITE_PERMISSION = 78905;
+    public static final int REQUEST_WRITE_PERMISSION_GALLERY = 78905;
     public static final int DEFAULT_COLUMN_COUNT = 0;
     public static final int FULL_WIDTH_COLUMN = 1;
 
@@ -82,4 +91,13 @@ public class Common {
         }
     }
 
+    public static void setSpanString(String welcome, String name, TextView textView) {
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+        builder.append(welcome);
+        SpannableString spannableString = new SpannableString(name);
+        StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
+        spannableString.setSpan(boldSpan, 0, name.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        builder.append(spannableString);
+        textView.setText(builder, TextView.BufferType.SPANNABLE);
+    }
 }

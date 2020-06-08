@@ -3,16 +3,16 @@
     style="@android:style/Widget.ActionButton"
     android:layout_width="60dp"
     android:layout_height="60dp"
-    android:background="@color/colorPrimary">
+    android:background="@color/colorPrimary"
+    android:clickable="true"
+    android:onClick="profileMenu"
+    android:foreground="?attr/selectableItemBackground">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/civProfile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:foreground="?attr/selectableItemBackground"
-        android:src="@drawable/ic_account_circle_white_48dp"
-        android:visibility="gone" />
+        android:src="@drawable/ic_account_circle_white_48dp" />
 
 
 </RelativeLayout>

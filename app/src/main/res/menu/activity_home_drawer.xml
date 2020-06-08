@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
@@ -11,12 +12,14 @@
         <item
             android:id="@+id/nav_cart"
             android:icon="@drawable/ic_shopping_cart_black_24dp"
-            android:title="@string/menu_cart"/>
+            android:title="@string/menu_cart"
+            app:actionViewClass="android.widget.TextView" />
 
         <item
             android:id="@+id/nav_order"
             android:icon="@drawable/ic_view_headline_black_24dp"
-            android:title="@string/menu_order"/>
+            android:title="@string/menu_order"
+            app:actionViewClass="android.widget.TextView" />
 
     </group>
 
@@ -24,7 +27,7 @@
         <item
             android:id="@+id/nav_signout"
             android:icon="@drawable/ic_exit_to_app_black_24dp"
-            android:title="@string/menu_signout"
-            android:onClick="signout"/>
+            android:onClick="signout"
+            android:title="@string/menu_signout" />
     </group>
 </menu>

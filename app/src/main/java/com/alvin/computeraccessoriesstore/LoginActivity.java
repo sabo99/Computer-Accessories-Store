@@ -20,11 +20,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alvin.computeraccessoriesstore.Common.Common;
+import com.alvin.computeraccessoriesstore.EventBus.SweetAlertDialogLogin;
 import com.alvin.computeraccessoriesstore.Model.UserModel;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.ontbee.legacyforks.cn.pedant.SweetAlert.SweetAlertDialog;
+
+import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.tvSignUp)
     TextView tvSignUp;
 
-    String email, password, getPassword;
+    String email, password;
 
     LinearLayout.LayoutParams paramsEmail =
             new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, // Width
@@ -93,12 +97,20 @@ public class LoginActivity extends AppCompatActivity {
                 if (checkEmail(true, email)) {
                     firebaseAuth.sendPasswordResetEmail(email)
                             .addOnSuccessListener(aVoid -> {
-                                Toast.makeText(this, "Reset password link sent to your email!", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(this, "Reset password link sent to your email!", Toast.LENGTH_SHORT).show();
+                                new SweetAlertDialog(LoginActivity.this, SweetAlertDialog.SUCCESS_TYPE)
+                                        .setTitleText("Reset Password Link")
+                                        .setContentText("Reset password link sent to your email!")
+                                        .show();
                                 pbSignIn.setVisibility(View.INVISIBLE);
                                 dialog.dismiss();
                             })
                             .addOnFailureListener(e -> {
-                                Toast.makeText(this, "There is no user record!", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(this, "There is no user record!", Toast.LENGTH_SHORT).show();
+                                new SweetAlertDialog(LoginActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                        .setTitleText("Oops...")
+                                        .setContentText("There is no user record!")
+                                        .show();
                                 pbSignIn.setVisibility(View.INVISIBLE);
                             });
                 }
@@ -143,18 +155,27 @@ public class LoginActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 pbSignIn.setVisibility(View.INVISIBLE);
                                 initClear();
-                                Toast.makeText(this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
+                                EventBus.getDefault().postSticky(new SweetAlertDialogLogin(true, false));
                                 startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                                 finish();
                             } else {
                                 pbSignIn.setVisibility(View.INVISIBLE);
-                                Toast.makeText(this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                new SweetAlertDialog(LoginActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                        .setTitleText("Oops...")
+                                        .setContentText("Something went wrong!")
+                                        .show();
                                 Log.d("task", task.getException().getMessage());
                             }
 
                         })
                         .addOnFailureListener(e -> {
                             pbSignIn.setVisibility(View.INVISIBLE);
+                            new SweetAlertDialog(LoginActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                    .setTitleText("Oops...")
+                                    .setContentText("Something went wrong!")
+                                    .show();
                             Log.d("error", e.getMessage());
                         });
             }
@@ -259,7 +280,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onResume();
 
         if (firebaseUser!= null) {
-            Toast.makeText(this, "User is Logged in Already", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "User is Logged in Already", Toast.LENGTH_SHORT).show();
+            EventBus.getDefault().postSticky(new SweetAlertDialogLogin(false, true));
             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
             finish();
         }

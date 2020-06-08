@@ -1,7 +1,7 @@
 package com.alvin.computeraccessoriesstore.Model;
 
 public class SliderModel {
-    private String image, description;
+    private String image, description, item_id, id;
 
     public SliderModel() {
     }
@@ -20,5 +20,21 @@ public class SliderModel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getItem_id() {
+        return item_id;
+    }
+
+    public void setItem_id(String item_id) {
+        this.item_id = item_id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

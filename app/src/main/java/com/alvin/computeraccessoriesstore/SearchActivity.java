@@ -147,7 +147,7 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        searchBar.disableSearch();
+        searchBar.enableSearch();
     }
 
     @Override

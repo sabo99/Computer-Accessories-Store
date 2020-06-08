@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,11 +33,15 @@ import com.alvin.computeraccessoriesstore.Adapter.CartAdapter;
 import com.alvin.computeraccessoriesstore.Common.Common;
 import com.alvin.computeraccessoriesstore.Common.ILoadTimeFromFirebaseListener;
 import com.alvin.computeraccessoriesstore.Common.SwipeHelper;
-import com.alvin.computeraccessoriesstore.EventBus.CounterCartEvent;
+import com.alvin.computeraccessoriesstore.EventBus.CounterCart;
+import com.alvin.computeraccessoriesstore.EventBus.CounterViewOrder;
+import com.alvin.computeraccessoriesstore.EventBus.HideBadgeCart;
+import com.alvin.computeraccessoriesstore.EventBus.HideCivProfile;
 import com.alvin.computeraccessoriesstore.EventBus.HideFABCart;
 import com.alvin.computeraccessoriesstore.EventBus.UpdateItemInCart;
 import com.alvin.computeraccessoriesstore.Model.Order;
 import com.alvin.computeraccessoriesstore.Model.UserModel;
+import com.alvin.computeraccessoriesstore.ProfileActivity;
 import com.alvin.computeraccessoriesstore.R;
 import com.alvin.computeraccessoriesstore.RoomDB.CartDataSource;
 import com.alvin.computeraccessoriesstore.RoomDB.CartDatabase;
@@ -52,6 +56,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.ontbee.legacyforks.cn.pedant.SweetAlert.SweetAlertDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -124,16 +129,13 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
                 group_place_holder.setVisibility(View.GONE);
                 txt_empty_cart.setText(View.VISIBLE);
             } else {
+                txt_empty_cart.setVisibility(View.GONE);
                 recycler_cart.setVisibility(View.VISIBLE);
                 txt_text.setVisibility(View.VISIBLE);
                 group_place_holder.setVisibility(View.VISIBLE);
-                txt_empty_cart.setVisibility(View.GONE);
-
                 recycler_cart.setAdapter(adapter);
             }
         });
-
-
 
         return root;
     }
@@ -142,7 +144,7 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
 
         setHasOptionsMenu(true);
 
-        txt_empty_cart.setVisibility(View.VISIBLE);
+        txt_empty_cart.setVisibility(View.GONE);
 
         listener = this;
 
@@ -176,7 +178,7 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
                                             // Update Total Price
                                             sumAllItemCart();
                                             // Update Counter FAB (COUNT)
-                                            EventBus.getDefault().postSticky(new CounterCartEvent(true));
+                                            EventBus.getDefault().postSticky(new CounterCart(true));
                                             Toast.makeText(getContext(), "Remove item successful!", Toast.LENGTH_SHORT).show();
                                         }
 
@@ -257,19 +259,26 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
     }
 
     private void showDialogClearCart() {
-        AlertDialog alertDialog;
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext()).setCancelable(false);
-        builder.setTitle("Clear All Cart")
-                .setMessage("Are you sure clear all cart?")
-                .setNegativeButton("NO", (dialog, which) -> dialog.dismiss())
-                .setPositiveButton("YES", (dialog, which) -> {
-                    dialog.dismiss();
-                    clearCart();
-                });
-        alertDialog = builder.create();
-        alertDialog.show();
-        Button positif = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        positif.setTextColor(Color.RED);
+
+        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("Clear All Cart")
+                .setContentText("Are you sure clear all cart?")
+                .setConfirmText("Yes")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                        clearCart();
+                    }
+                })
+                .setCancelText("No")
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                    }
+                })
+                .show();
     }
 
     private void clearCart() {
@@ -284,9 +293,13 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
 
                     @Override
                     public void onSuccess(Integer integer) {
-                        Toast.makeText(getContext(), "Clear Cart Success", Toast.LENGTH_SHORT).show();
-                        EventBus.getDefault().postSticky(new CounterCartEvent(true));
+                        //Toast.makeText(getContext(), "Clear Cart Success", Toast.LENGTH_SHORT).show();
+                        EventBus.getDefault().postSticky(new CounterCart(true));
                         txt_empty_cart.setVisibility(View.VISIBLE);
+                        new SweetAlertDialog(getContext(), SweetAlertDialog.SUCCESS_TYPE)
+                                .setTitleText("Success")
+                                .setContentText("Clear Cart Success!")
+                                .show();
                     }
 
                     @Override
@@ -321,6 +334,8 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
     public void onResume() {
         super.onResume();
         EventBus.getDefault().postSticky(new HideFABCart(true));
+        EventBus.getDefault().postSticky(new HideBadgeCart(true));
+        EventBus.getDefault().postSticky(new HideCivProfile(true));
         getAllCartItems();
     }
 
@@ -515,6 +530,10 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
     @Override
     public void onLoadTimeFailed(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        new SweetAlertDialog(getContext(), SweetAlertDialog.ERROR_TYPE)
+                .setTitleText("Oops...")
+                .setContentText("Something went wrong!")
+                .show();
     }
 
     private void writeOrderToFirebase(Order order) {
@@ -523,7 +542,10 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
                 .child(order.getOrderNumber())
                 .setValue(order)
                 .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    new SweetAlertDialog(getContext(), SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText("Oops...")
+                            .setContentText("Something went wrong!")
+                            .show();
                 })
                 .addOnCompleteListener(task -> {
                     cartDataSource.cleanCart(firebaseUser.getUid())
@@ -537,9 +559,14 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
 
                                 @Override
                                 public void onSuccess(Integer integer) {
-                                    EventBus.getDefault().postSticky(new CounterCartEvent(true));
-                                    Toast.makeText(getContext(), "Order placed Successfully", Toast.LENGTH_SHORT).show();
+                                    EventBus.getDefault().postSticky(new CounterCart(true));
+                                    EventBus.getDefault().postSticky(new CounterViewOrder(true));
                                     txt_empty_cart.setVisibility(View.VISIBLE);
+                                    new SweetAlertDialog(getContext(), SweetAlertDialog.SUCCESS_TYPE)
+                                            .setTitleText("Success")
+                                            .setContentText("Order placed Successfully!")
+                                            .show();
+                                    //Toast.makeText(getContext(), "Order placed Successfully", Toast.LENGTH_SHORT).show();
                                 }
 
                                 @Override

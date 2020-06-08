@@ -1,6 +1,5 @@
 package com.alvin.computeraccessoriesstore.ui.view_order;
 
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,8 +20,10 @@ import android.widget.Toast;
 import com.alvin.computeraccessoriesstore.Adapter.OrdersAdapter;
 import com.alvin.computeraccessoriesstore.Common.Common;
 import com.alvin.computeraccessoriesstore.Common.ILoadOrderCallbackListener;
+import com.alvin.computeraccessoriesstore.EventBus.HideBadgeCart;
+import com.alvin.computeraccessoriesstore.EventBus.HideCivProfile;
 import com.alvin.computeraccessoriesstore.EventBus.HideFABCart;
-import com.alvin.computeraccessoriesstore.EventBus.RefreshViewOrderEvent;
+import com.alvin.computeraccessoriesstore.EventBus.RefreshViewOrder;
 import com.alvin.computeraccessoriesstore.Model.Order;
 import com.alvin.computeraccessoriesstore.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,6 +32,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.ontbee.legacyforks.cn.pedant.SweetAlert.SweetAlertDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -145,6 +146,8 @@ public class OrderListFragment extends Fragment implements ILoadOrderCallbackLis
     public void onResume() {
         super.onResume();
         EventBus.getDefault().postSticky(new HideFABCart(true));
+        EventBus.getDefault().postSticky(new HideBadgeCart(true));
+        EventBus.getDefault().postSticky(new HideCivProfile(true));
     }
 
     @Override
@@ -160,7 +163,7 @@ public class OrderListFragment extends Fragment implements ILoadOrderCallbackLis
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    public void onRefreshViewOrder(RefreshViewOrderEvent event){
+    public void onRefreshViewOrder(RefreshViewOrder event){
         if (event.isRefresh()){
             loadOrderFromFirebase();
         }

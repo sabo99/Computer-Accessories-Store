@@ -1,7 +1,6 @@
 package com.alvin.computeraccessoriesstore.Adapter;
 
 import android.content.Context;
-import android.util.EventLog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alvin.computeraccessoriesstore.Common.Common;
-import com.alvin.computeraccessoriesstore.EventBus.CounterCartEvent;
+import com.alvin.computeraccessoriesstore.EventBus.CounterCart;
 import com.alvin.computeraccessoriesstore.EventBus.UpdateItemInCart;
 import com.alvin.computeraccessoriesstore.R;
 import com.alvin.computeraccessoriesstore.RoomDB.CartItem;
@@ -56,7 +55,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             // When user click this button, will update database
             cartItemList.get(position).setItemQuantity(newValue);
             EventBus.getDefault().postSticky(new UpdateItemInCart(cartItemList.get(position)));
-            EventBus.getDefault().postSticky(new CounterCartEvent(true));
+            EventBus.getDefault().postSticky(new CounterCart(true));
         });
     }
 

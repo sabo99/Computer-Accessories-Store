@@ -1,6 +1,5 @@
 package com.alvin.computeraccessoriesstore.ui.items_detail;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,7 +19,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.alvin.computeraccessoriesstore.Common.Common;
-import com.alvin.computeraccessoriesstore.EventBus.CounterCartEvent;
+import com.alvin.computeraccessoriesstore.EventBus.CounterCart;
+import com.alvin.computeraccessoriesstore.EventBus.HideBadgeCart;
+import com.alvin.computeraccessoriesstore.EventBus.HideCivProfile;
+import com.alvin.computeraccessoriesstore.EventBus.HideFABCart;
+import com.alvin.computeraccessoriesstore.EventBus.PopularSliderItemClick;
 import com.alvin.computeraccessoriesstore.Model.ItemsModel;
 import com.alvin.computeraccessoriesstore.R;
 import com.alvin.computeraccessoriesstore.RoomDB.CartDataSource;
@@ -30,7 +33,6 @@ import com.alvin.computeraccessoriesstore.RoomDB.LocalCartDataSource;
 import com.andremion.counterfab.CounterFab;
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
 import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.ms.square.android.expandabletextview.ExpandableTextView;
@@ -128,7 +130,7 @@ public class ItemsDetailFragment extends Fragment {
                                         public void onSuccess(Integer integer) {
                                             Log.d("s", integer.toString());
                                             Toast.makeText(getContext(), "Update Cart success", Toast.LENGTH_SHORT).show();
-                                            EventBus.getDefault().postSticky(new CounterCartEvent(true));
+                                            EventBus.getDefault().postSticky(new CounterCart(true));
                                         }
 
                                         @Override
@@ -143,7 +145,7 @@ public class ItemsDetailFragment extends Fragment {
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe(() -> {
                                         Toast.makeText(getContext(), "Add to Cart success", Toast.LENGTH_SHORT).show();
-                                        EventBus.getDefault().postSticky(new CounterCartEvent(true));
+                                        EventBus.getDefault().postSticky(new CounterCart(true));
                                     }, throwable -> {
                                         Toast.makeText(getContext(), "[CART ERROR]" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
                                     }));
@@ -159,7 +161,7 @@ public class ItemsDetailFragment extends Fragment {
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe(() -> {
                                         Toast.makeText(getContext(), "Add to Cart success", Toast.LENGTH_SHORT).show();
-                                        EventBus.getDefault().postSticky(new CounterCartEvent(true));
+                                        EventBus.getDefault().postSticky(new CounterCart(true));
                                     }, throwable -> {
                                         Toast.makeText(getContext(), "[CART ERROR]" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
                                     }));
@@ -238,9 +240,22 @@ public class ItemsDetailFragment extends Fragment {
         });
     }
 
+
     @Override
     public void onStop() {
+        EventBus.getDefault().removeStickyEvent(PopularSliderItemClick.class);
+        EventBus.getDefault().unregister(this);
         compositeDisposable.clear();
         super.onStop();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().postSticky(new HideFABCart(true));
+        EventBus.getDefault().postSticky(new HideBadgeCart(false));
+        EventBus.getDefault().postSticky(new HideCivProfile(true));
+    }
+
+
 }

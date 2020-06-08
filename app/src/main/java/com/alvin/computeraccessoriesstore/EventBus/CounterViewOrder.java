@@ -1,9 +1,9 @@
 package com.alvin.computeraccessoriesstore.EventBus;
 
-public class CounterCartEvent {
+public class CounterViewOrder {
     private boolean success;
 
-    public CounterCartEvent(boolean success) {
+    public CounterViewOrder(boolean success) {
         this.success = success;
     }
 

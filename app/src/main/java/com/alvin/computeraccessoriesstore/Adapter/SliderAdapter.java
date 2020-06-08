@@ -8,10 +8,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alvin.computeraccessoriesstore.EventBus.PopularSliderItemClick;
 import com.alvin.computeraccessoriesstore.Model.SliderModel;
 import com.alvin.computeraccessoriesstore.R;
 import com.smarteist.autoimageslider.SliderViewAdapter;
 import com.squareup.picasso.Picasso;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -40,6 +43,10 @@ public class SliderAdapter extends SliderViewAdapter<SliderAdapter.ViewHolder> {
 
         Picasso.get().load(sliderModel.getImage()).into(holder.imgSlider);
         holder.tvDescription.setText(sliderModel.getDescription());
+
+        holder.itemView.setOnClickListener(v -> {
+            EventBus.getDefault().postSticky(new PopularSliderItemClick(sliderModelList.get(position)));
+        });
     }
 
     @Override
@@ -47,7 +54,7 @@ public class SliderAdapter extends SliderViewAdapter<SliderAdapter.ViewHolder> {
         return sliderModelList.size();
     }
 
-    public class ViewHolder extends SliderViewAdapter.ViewHolder {
+    public class ViewHolder extends SliderViewAdapter.ViewHolder{
 
         @BindView(R.id.imgSlider)
         ImageView imgSlider;

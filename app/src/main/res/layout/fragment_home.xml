@@ -8,6 +8,7 @@
     tools:context=".ui.home.HomeFragment">
 
 
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -135,7 +136,7 @@
                     app:sliderIndicatorRadius="1.5dp"
                     app:sliderIndicatorSelectedColor="#5A5A5A"
                     app:sliderIndicatorUnselectedColor="#FFF"
-                    app:sliderScrollTimeInSec="1" />
+                    app:sliderScrollTimeInSec="2" />
 
                 <ProgressBar
                     android:id="@+id/pbStore"
@@ -175,7 +176,7 @@
                     android:id="@+id/rvDataStore"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="10dp"/>
+                    android:layout_marginTop="10dp" />
 
                 <ProgressBar
                     android:id="@+id/pbSlider"
@@ -200,6 +201,5 @@
         </RelativeLayout>
 
     </RelativeLayout>
-
 
 </RelativeLayout>
