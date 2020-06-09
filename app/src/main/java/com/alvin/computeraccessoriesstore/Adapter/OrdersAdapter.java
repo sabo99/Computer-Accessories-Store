@@ -100,7 +100,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ViewHolder
         new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
                 .setTitleText("Cancel Order")
                 .setContentText("Are you sure you canceled this order?")
-                .setConfirmText("Ok")
+                .setConfirmText("Yes")
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog1) {
@@ -122,7 +122,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ViewHolder
                                 });
                     }
                 })
-                .setCancelText("Cancel")
+                .setCancelText("No")
                 .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog1) {

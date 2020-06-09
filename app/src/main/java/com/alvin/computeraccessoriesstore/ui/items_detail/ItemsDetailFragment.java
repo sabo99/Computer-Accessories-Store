@@ -36,7 +36,6 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.ms.square.android.expandabletextview.ExpandableTextView;
-import com.ontbee.legacyforks.cn.pedant.SweetAlert.SweetAlertDialog;
 import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;

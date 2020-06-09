@@ -10,12 +10,9 @@ import android.widget.TextView;
 import com.alvin.computeraccessoriesstore.Model.ItemsModel;
 import com.alvin.computeraccessoriesstore.Model.StoreModel;
 import com.alvin.computeraccessoriesstore.Model.UserModel;
-import com.alvin.computeraccessoriesstore.RoomDB.LocalCartDataSource;
-import com.nex3z.notificationbadge.NotificationBadge;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.util.List;
 import java.util.Random;
 
 public class Common {

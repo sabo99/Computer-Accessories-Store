@@ -1,6 +1,5 @@
 package com.alvin.computeraccessoriesstore.ui.items_detail;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 

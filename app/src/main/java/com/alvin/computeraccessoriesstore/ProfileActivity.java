@@ -7,7 +7,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -17,14 +16,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alvin.computeraccessoriesstore.Common.Common;
 import com.alvin.computeraccessoriesstore.Model.UserModel;
@@ -152,7 +149,10 @@ public class ProfileActivity extends AppCompatActivity {
             } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception e = result.getError();
                 pbUploadImage.setVisibility(View.INVISIBLE);
-                Toast.makeText(this, "Error: " + e, Toast.LENGTH_SHORT).show();
+                new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
+                        .setTitleText("Oops...")
+                        .setContentText("Something went wrong!")
+                        .show();
             } else
                 pbUploadImage.setVisibility(View.INVISIBLE);
         }
@@ -259,7 +259,7 @@ public class ProfileActivity extends AppCompatActivity {
                         new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.WARNING_TYPE)
                                 .setTitleText("Update User Profile")
                                 .setContentText("Are you sure change this profile?")
-                                .setConfirmText("OK")
+                                .setConfirmText("Yes")
                                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                     @Override
                                     public void onClick(SweetAlertDialog sweetAlertDialog) {
@@ -268,7 +268,7 @@ public class ProfileActivity extends AppCompatActivity {
                                         updateUserProfile(updateData);
                                     }
                                 })
-                                .setCancelText("Cancel")
+                                .setCancelText("No")
                                 .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                     @Override
                                     public void onClick(SweetAlertDialog sweetAlertDialog) {
@@ -375,7 +375,6 @@ public class ProfileActivity extends AppCompatActivity {
                                                     .setTitleText("Success")
                                                     .setContentText("Password Reset Successfully!")
                                                     .show();
-                                            //Toast.makeText(this, "Password Reset Successfully", Toast.LENGTH_SHORT).show();
                                             dialog.dismiss();
                                             pbUploadImage.setVisibility(View.INVISIBLE);
                                         })
@@ -384,7 +383,6 @@ public class ProfileActivity extends AppCompatActivity {
                                                     .setTitleText("Oops...")
                                                     .setContentText("Something went wrong! \n Please Re-Login!")
                                                     .show();
-                                            //Toast.makeText(this, "Password Reset Failed!", Toast.LENGTH_SHORT).show();
                                             Log.d("Tag", e.getMessage());
                                             dialog.dismiss();
                                             pbUploadImage.setVisibility(View.INVISIBLE);
@@ -525,7 +523,6 @@ public class ProfileActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                        //Toast.makeText(ProfileActivity.this, "Some error with database", Toast.LENGTH_SHORT).show();
                         new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.ERROR_TYPE)
                                 .setTitleText("Oops...")
                                 .setConfirmText("Something went wrong!")

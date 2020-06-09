@@ -3,7 +3,6 @@ package com.alvin.computeraccessoriesstore;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -17,11 +16,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.alvin.computeraccessoriesstore.Common.Common;
 import com.alvin.computeraccessoriesstore.EventBus.SweetAlertDialogLogin;
-import com.alvin.computeraccessoriesstore.Model.UserModel;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -155,13 +151,11 @@ public class LoginActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 pbSignIn.setVisibility(View.INVISIBLE);
                                 initClear();
-                                //Toast.makeText(this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
                                 EventBus.getDefault().postSticky(new SweetAlertDialogLogin(true, false));
                                 startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                                 finish();
                             } else {
                                 pbSignIn.setVisibility(View.INVISIBLE);
-                                //Toast.makeText(this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 new SweetAlertDialog(LoginActivity.this, SweetAlertDialog.WARNING_TYPE)
                                         .setTitleText("Oops...")
                                         .setContentText(task.getException().getMessage())
@@ -222,6 +216,9 @@ public class LoginActivity extends AppCompatActivity {
             check = false;
             etEmail.setError("Email is Required");
         }
+        if (!TextUtils.isEmpty(email) || !email.equals("")) {
+            etEmail.setError(null);
+        }
         if (TextUtils.isEmpty(password) || password.equals("")) {
             check = false;
             tilPassword.setHelperTextEnabled(true);
@@ -276,7 +273,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onResume();
 
         if (firebaseUser!= null) {
-            //Toast.makeText(this, "User is Logged in Already", Toast.LENGTH_SHORT).show();
             EventBus.getDefault().postSticky(new SweetAlertDialogLogin(false, true));
             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
             finish();

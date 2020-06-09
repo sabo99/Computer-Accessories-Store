@@ -4,7 +4,6 @@ import androidx.cardview.widget.CardView;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -25,7 +24,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +39,6 @@ import com.alvin.computeraccessoriesstore.EventBus.HideFABCart;
 import com.alvin.computeraccessoriesstore.EventBus.UpdateItemInCart;
 import com.alvin.computeraccessoriesstore.Model.Order;
 import com.alvin.computeraccessoriesstore.Model.UserModel;
-import com.alvin.computeraccessoriesstore.ProfileActivity;
 import com.alvin.computeraccessoriesstore.R;
 import com.alvin.computeraccessoriesstore.RoomDB.CartDataSource;
 import com.alvin.computeraccessoriesstore.RoomDB.CartDatabase;
@@ -179,12 +176,18 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
                                             sumAllItemCart();
                                             // Update Counter FAB (COUNT)
                                             EventBus.getDefault().postSticky(new CounterCart(true));
-                                            Toast.makeText(getContext(), "Remove item successful!", Toast.LENGTH_SHORT).show();
+                                            new SweetAlertDialog(getContext(), SweetAlertDialog.SUCCESS_TYPE)
+                                                    .setTitleText("Success")
+                                                    .setContentText("Remove item successful!")
+                                                    .show();
                                         }
 
                                         @Override
                                         public void onError(Throwable e) {
-                                            Toast.makeText(getContext(), "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            new SweetAlertDialog(getContext(), SweetAlertDialog.ERROR_TYPE)
+                                                    .setTitleText("Oops...")
+                                                    .setContentText("Something went wrong!")
+                                                    .show();
                                         }
                                     });
                         }));
@@ -227,7 +230,6 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
                     @Override
                     public void onError(Throwable e) {
                         if (e.getMessage().contains("Query returned empty")){
-                            Toast.makeText(getContext(), "Cart is empty", Toast.LENGTH_SHORT).show();
                             txt_empty_cart.setVisibility(View.VISIBLE);
                         }
                         else
@@ -235,12 +237,6 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
 
                     }
                 });
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(@NonNull Menu menu) {
-//        menu.findItem(R.id.action_settings).setVisible(false);
-        super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -307,7 +303,10 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
                         if (e.getMessage().contains("Query returned empty"))
                             Toast.makeText(getContext(), "Cart is empty", Toast.LENGTH_SHORT).show();
                         else
-                            Toast.makeText(getContext(), "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            new SweetAlertDialog(getContext(), SweetAlertDialog.ERROR_TYPE)
+                                    .setTitleText("Oops...")
+                                    .setContentText("Something went wrong!")
+                                    .show();
 
                     }
                 });
@@ -463,7 +462,10 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
 
                                             @Override
                                             public void onError(Throwable e) {
-
+                                                new SweetAlertDialog(getContext(), SweetAlertDialog.ERROR_TYPE)
+                                                        .setTitleText("Oops...")
+                                                        .setContentText("Something went wrong!")
+                                                        .show();
                                             }
                                         });
                             }));
@@ -529,7 +531,6 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
 
     @Override
     public void onLoadTimeFailed(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
         new SweetAlertDialog(getContext(), SweetAlertDialog.ERROR_TYPE)
                 .setTitleText("Oops...")
                 .setContentText("Something went wrong!")
@@ -573,12 +574,14 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
                                                 }
                                             })
                                             .show();
-                                    //Toast.makeText(getContext(), "Order placed Successfully", Toast.LENGTH_SHORT).show();
                                 }
 
                                 @Override
                                 public void onError(Throwable e) {
-
+                                    new SweetAlertDialog(getContext(), SweetAlertDialog.ERROR_TYPE)
+                                            .setTitleText("Oops...")
+                                            .setContentText("Something went wrong!")
+                                            .show();
                                 }
                             });
                 });

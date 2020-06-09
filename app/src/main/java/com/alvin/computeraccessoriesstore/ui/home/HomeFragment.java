@@ -39,7 +39,7 @@ public class HomeFragment extends Fragment {
 
     FirebaseAuth firebaseAuth;
     FirebaseUser firebaseUser;
-    StorageReference storageReference, profileRef;
+    StorageReference storageReference;
 
     private HomeViewModel homeViewModel;
 

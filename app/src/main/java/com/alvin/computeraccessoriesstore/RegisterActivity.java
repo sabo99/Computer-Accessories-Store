@@ -2,8 +2,6 @@ package com.alvin.computeraccessoriesstore;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -11,17 +9,14 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
-import android.view.Gravity;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alvin.computeraccessoriesstore.Common.Common;
+import com.alvin.computeraccessoriesstore.EventBus.SweetAlertDialogLogin;
 import com.alvin.computeraccessoriesstore.Model.UserModel;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -29,6 +24,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 import com.ontbee.legacyforks.cn.pedant.SweetAlert.SweetAlertDialog;
+
+import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -146,6 +143,7 @@ public class RegisterActivity extends AppCompatActivity {
                                                         public void onClick(SweetAlertDialog sweetAlertDialog) {
                                                             initClear();
                                                             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                                                            EventBus.getDefault().postSticky(new SweetAlertDialogLogin(true, false));
                                                         }
                                                     })
                                                     .show();
@@ -158,7 +156,6 @@ public class RegisterActivity extends AppCompatActivity {
                                         .setTitleText("Oops...")
                                         .setContentText("Something went wrong!")
                                         .show();
-                                Toast.makeText(this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
                             pbSignUp.setVisibility(View.INVISIBLE);
                         })

@@ -1,26 +1,15 @@
 package com.alvin.computeraccessoriesstore;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alvin.computeraccessoriesstore.Common.Common;
 import com.alvin.computeraccessoriesstore.EventBus.CounterCart;
@@ -104,6 +93,8 @@ public class HomeActivity extends AppCompatActivity {
     TextView tvCartBadgeDrawer, tvOrderViewBadgeDrawer;
     CircleImageView civProfile;
 
+    UserModel tempModel = new UserModel();
+
     @BindView(R.id.fab)
     CounterFab fab;
 
@@ -137,6 +128,13 @@ public class HomeActivity extends AppCompatActivity {
         initViewUser(navigationView, toolbar);
         initCartBadge(toolbar);
         initLoadingDialog();
+    }
+
+    private void initLoadingDialog() {
+        sweetAlertDialog = new SweetAlertDialog(HomeActivity.this, SweetAlertDialog.PROGRESS_TYPE);
+        sweetAlertDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.colorPrimary));
+        sweetAlertDialog.setTitleText("Loading");
+        sweetAlertDialog.setCancelable(false);
     }
 
     private void initCartBadge(Toolbar toolbar) {
@@ -203,11 +201,17 @@ public class HomeActivity extends AppCompatActivity {
                             imgPhotoHeader.setVisibility(View.VISIBLE);
                             civProfile.setVisibility(View.VISIBLE);
                             pbHeader.setVisibility(View.GONE);
+
+                            tempModel = userModel;
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
-                            Toast.makeText(HomeActivity.this, "Some error with database", Toast.LENGTH_SHORT).show();
+                            sweetAlertDialog.dismissWithAnimation();
+                            new SweetAlertDialog(HomeActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                    .setTitleText("Oops...")
+                                    .setContentText("Something went wrong!")
+                                    .show();
                         }
                     });
         }
@@ -222,32 +226,6 @@ public class HomeActivity extends AppCompatActivity {
 
     public void signout(MenuItem item) {
         drawer.closeDrawers();
-
-//        builder = new AlertDialog.Builder(this).setCancelable(false);
-//        builder.setTitle("Sign Out")
-//                .setMessage("Do you really want to Sign Out?")
-//                .setNegativeButton("NO", (dialog1, which) -> {
-//                    dialog1.dismiss();
-//                })
-//                .setPositiveButton("YES", (dialog1, which) -> {
-//                    dialog1.dismiss();
-//                    // Clear Model
-//                    Common.currentUser = null;
-//                    Common.storeItemsSelected = null;
-//                    Common.selectedItems = null;
-//                    // Sign Out
-//                    firebaseAuth.signOut();
-//                    Intent i = new Intent(this, LoginActivity.class);
-//                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                    startActivity(i);
-//                    finish();
-//                });
-//        dialog = builder.create();
-//        dialog.show();
-//
-//        Button btnPos;
-//        btnPos = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-//        btnPos.setTextColor(Color.RED);
 
         new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
                 .setTitleText("Sign Out!")
@@ -326,20 +304,44 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    public void onSuccessLogin(SweetAlertDialogLogin event){
-        if (event.isSuccessAutoLogin()){
-            if (firebaseUser != null){
-                sweetAlertDialogLogin = new SweetAlertDialog(HomeActivity.this);
-                sweetAlertDialogLogin.setTitleText("Welcome back!")
-                        .setContentText("User is Logged in Already!")
-                        .show();
+    public void onSuccessLogin(SweetAlertDialogLogin event) {
+        if (event.isSuccessAutoLogin()) {
+            if (firebaseUser != null) {
+                sweetAlertDialogLogin = new SweetAlertDialog(HomeActivity.this, SweetAlertDialog.PROGRESS_TYPE);
+                sweetAlertDialogLogin.getProgressHelper().setBarColor(getResources().getColor(R.color.colorPrimary));
+                sweetAlertDialogLogin.setTitleText("Loading").setCancelable(false);
+                sweetAlertDialogLogin.show();
+                userRef.child(firebaseUser.getUid())
+                        .addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                UserModel userModel = dataSnapshot.getValue(UserModel.class);
+                                sweetAlertDialogLogin.dismissWithAnimation();
+                                new SweetAlertDialog(HomeActivity.this)
+                                        .setTitleText("Welcome back!")
+                                        .setContentText(
+                                                String.valueOf(new StringBuilder("Hello, ")
+                                                        .append(userModel.getName()))
+                                        )
+                                        .show();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                sweetAlertDialogLogin.dismissWithAnimation();
+                                new SweetAlertDialog(HomeActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                        .setTitleText("Oops...")
+                                        .setContentText("Something went wrong!")
+                                        .show();
+                            }
+                        });
             }
         }
 
-        if (event.isSuccessLogin()){
-            if (firebaseUser != null){
-                sweetAlertDialogLogin = new SweetAlertDialog(HomeActivity.this);
-                sweetAlertDialogLogin.setTitleText("Success Login")
+        if (event.isSuccessLogin()) {
+            if (firebaseUser != null) {
+                new SweetAlertDialog(HomeActivity.this)
+                        .setTitleText("Success Login")
                         .setContentText("Logged in Successfully!")
                         .show();
             }
@@ -378,8 +380,9 @@ public class HomeActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        if (!e.getMessage().contains("Query returned empty"))
-                            Toast.makeText(HomeActivity.this, "[COUNT CART]" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        if (!e.getMessage().contains("Query returned empty")) {
+                            //Toast.makeText(HomeActivity.this, "[COUNT CART]" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                         else {
                             fab.setCount(0);
                             badge.setVisibility(View.INVISIBLE);
@@ -444,12 +447,16 @@ public class HomeActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Toast.makeText(HomeActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                        new SweetAlertDialog(HomeActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                .setTitleText("Oops...")
+                                .setContentText("Something went wrong!")
+                                .show();
                     }
                 });
     }
 
     public void profileMenu(View view) {
+        drawer.closeDrawers();
         startActivity(new Intent(this, ProfileActivity.class));
     }
 
@@ -459,13 +466,6 @@ public class HomeActivity extends AppCompatActivity {
             rl_action_profile.setVisibility(View.GONE);
         else
             rl_action_profile.setVisibility(View.VISIBLE);
-    }
-
-    private void initLoadingDialog() {
-        sweetAlertDialog = new SweetAlertDialog(HomeActivity.this, SweetAlertDialog.PROGRESS_TYPE);
-        sweetAlertDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.colorPrimary));
-        sweetAlertDialog.setTitleText("Loading");
-        sweetAlertDialog.setCancelable(false);
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
@@ -500,7 +500,10 @@ public class HomeActivity extends AppCompatActivity {
                                                     }
                                                     navController.navigate(R.id.nav_items_detail);
                                                 } else {
-                                                    Toast.makeText(HomeActivity.this, "Item doesn't exists!", Toast.LENGTH_SHORT).show();
+                                                    new SweetAlertDialog(HomeActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                                            .setTitleText("Oops...")
+                                                            .setContentText("Something went wrong!")
+                                                            .show();
                                                 }
 
                                                 sweetAlertDialog.dismiss();
@@ -508,7 +511,10 @@ public class HomeActivity extends AppCompatActivity {
 
                                             @Override
                                             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                                                new SweetAlertDialog(HomeActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                                        .setTitleText("Oops...")
+                                                        .setContentText("Something went wrong!")
+                                                        .show();
                                             }
                                         });
                             }
@@ -516,7 +522,10 @@ public class HomeActivity extends AppCompatActivity {
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                            new SweetAlertDialog(HomeActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                    .setTitleText("Oops...")
+                                    .setContentText("Something went wrong!")
+                                    .show();
                         }
                     });
         }
