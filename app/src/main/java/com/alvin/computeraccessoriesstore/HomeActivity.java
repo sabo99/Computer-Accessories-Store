@@ -320,9 +320,16 @@ public class HomeActivity extends AppCompatActivity {
                                 new SweetAlertDialog(HomeActivity.this)
                                         .setTitleText("Welcome back!")
                                         .setContentText(
+
                                                 String.valueOf(new StringBuilder("Hello, ")
                                                         .append(userModel.getName()))
                                         )
+                                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                            @Override
+                                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                                sweetAlertDialog.dismissWithAnimation();
+                                            }
+                                        })
                                         .show();
                             }
 

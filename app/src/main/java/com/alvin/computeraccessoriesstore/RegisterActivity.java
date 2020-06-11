@@ -113,6 +113,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 userModel.setEmail(email);
                                 userModel.setPhone(phone);
                                 userModel.setGender(gender);
+                                userModel.setPassword(password);
 
                                 FirebaseDatabase.getInstance()
                                         .getReference(Common.USER_REF)

@@ -23,7 +23,8 @@ public class Common {
     public static final String F_NAME = "name";
     public static final String F_EMAIL = "email";
     public static final String F_PHONE = "phone";
-    public static final String F_IMAGE = "image";
+    public static final String F_PASS = "password";
+    //public static final String F_IMAGE = "image";
     public static final String F_ID = "id";
     public static final String CHILD_ITEMS = "items";
 

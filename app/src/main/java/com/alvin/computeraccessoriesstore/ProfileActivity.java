@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -16,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -25,8 +27,14 @@ import android.widget.TextView;
 
 import com.alvin.computeraccessoriesstore.Common.Common;
 import com.alvin.computeraccessoriesstore.Model.UserModel;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -53,7 +61,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     AlertDialog.Builder builder;
     AlertDialog dialog;
-    SweetAlertDialog sweetAlertDialog;
+    SweetAlertDialog sweetAlertDialogLoading;
 
     DatabaseReference userRef;
     StorageReference storageReference;
@@ -83,12 +91,12 @@ public class ProfileActivity extends AppCompatActivity {
     @BindView(R.id.tvVerify)
     TextView tvVerify;
 
-    TextView tvNotif, title, message;
+    TextView tvNotif, title;
     TextInputLayout tilResetEmail, tilResetPasswordOld, tilResetPasswordNew;
-    TextInputEditText etResetPasswordOld, etResetPasswordNew, etEmail, etName, etPhone;
-    Button positif, negatif, btnCancel, btnUpdate;
+    TextInputEditText etResetPasswordOld, etResetPasswordNew, etEmail, etName, etPhone, etPass;
+    Button positif, negatif, btnCancel, btnUpdate, btnConfirm;
 
-    String userId, email, name, phone;
+    String userId, name, phone;
     Uri imageUri;
 
     String filePath;
@@ -145,7 +153,7 @@ public class ProfileActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 imageUri = result.getUri();
                 uploadImageToFirebase(imageUri);
-                showSweetAlertDialog();
+                sweetAlertDialogLoading.show();
             } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception e = result.getError();
                 pbUploadImage.setVisibility(View.INVISIBLE);
@@ -159,12 +167,11 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
-    private void showSweetAlertDialog() {
-        sweetAlertDialog = new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.PROGRESS_TYPE);
-        sweetAlertDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.colorPrimary));
-        sweetAlertDialog.setTitleText("Uploading...");
-        sweetAlertDialog.setCancelable(false);
-        sweetAlertDialog.show();
+    private void initSweetAlertDialog() {
+        sweetAlertDialogLoading = new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.PROGRESS_TYPE);
+        sweetAlertDialogLoading.getProgressHelper().setBarColor(getResources().getColor(R.color.colorPrimary));
+        sweetAlertDialogLoading.setTitleText("Uploading...");
+        sweetAlertDialogLoading.setCancelable(false);
     }
 
 
@@ -177,7 +184,7 @@ public class ProfileActivity extends AppCompatActivity {
                         Picasso.get().load(uri).into(imgPhoto);
                         pbUploadImage.setVisibility(View.INVISIBLE);
 
-                        sweetAlertDialog.dismiss();
+                        sweetAlertDialogLoading.dismiss();
                         new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
                                 .setTitleText("Success")
                                 .setContentText("Image Upload Success")
@@ -190,7 +197,7 @@ public class ProfileActivity extends AppCompatActivity {
                     });
                 })
                 .addOnFailureListener(e -> {
-                    sweetAlertDialog.dismiss();
+                    sweetAlertDialogLoading.dismiss();
                     new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
                             .setContentText("Something went wrong!")
@@ -224,7 +231,6 @@ public class ProfileActivity extends AppCompatActivity {
             builder = new AlertDialog.Builder(this).setCancelable(false).setView(view);
             builder.setTitle("Update Data Profile");
 
-            etEmail = view.findViewById(R.id.etEmail);
             etName = view.findViewById(R.id.etName);
             etPhone = view.findViewById(R.id.etPhone);
             btnCancel = view.findViewById(R.id.btnCancel);
@@ -232,7 +238,6 @@ public class ProfileActivity extends AppCompatActivity {
 
             // Get Data
             etName.setText(tvName.getText().toString());
-            etEmail.setText(tvEmail.getText().toString());
             etPhone.setText(tvPhone.getText().toString());
 
             dialog = builder.create();
@@ -244,7 +249,6 @@ public class ProfileActivity extends AppCompatActivity {
 
                 btnUpdate.setOnClickListener(v -> {
                     // Get Text
-                    email = etEmail.getText().toString();
                     name = etName.getText().toString();
                     phone = etPhone.getText().toString();
 
@@ -252,9 +256,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                         Map<String, Object> updateData = new HashMap<>();
                         updateData.put(Common.F_NAME, name);
-                        updateData.put(Common.F_EMAIL, email);
                         updateData.put(Common.F_PHONE, phone);
-
 
                         new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.WARNING_TYPE)
                                 .setTitleText("Update User Profile")
@@ -263,6 +265,7 @@ public class ProfileActivity extends AppCompatActivity {
                                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                     @Override
                                     public void onClick(SweetAlertDialog sweetAlertDialog) {
+
                                         dialog.dismiss();
                                         sweetAlertDialog.dismissWithAnimation();
                                         updateUserProfile(updateData);
@@ -297,7 +300,7 @@ public class ProfileActivity extends AppCompatActivity {
                             .show();
                 })
                 .addOnSuccessListener(aVoid -> {
-                    new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
+                    new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.SUCCESS_TYPE)
                             .setTitleText("Success")
                             .setContentText("Updated Successfully!")
                             .show();
@@ -310,6 +313,7 @@ public class ProfileActivity extends AppCompatActivity {
             check = false;
             etName.setError("Name is Required.");
         }
+
         return check;
     }
     // ---------------------------------------------------------------------------------------------
@@ -369,24 +373,53 @@ public class ProfileActivity extends AppCompatActivity {
                     if (checkPassword(true, oldPassword, newPassword)) {
                         if (checkNewPassword(true, oldPassword, newPassword)) {
                             if (firebaseUser != null) {
-                                firebaseUser.updatePassword(newPassword)
-                                        .addOnSuccessListener(aVoid -> {
-                                            new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                                                    .setTitleText("Success")
-                                                    .setContentText("Password Reset Successfully!")
-                                                    .show();
-                                            dialog.dismiss();
-                                            pbUploadImage.setVisibility(View.INVISIBLE);
-                                        })
-                                        .addOnFailureListener(e -> {
-                                            new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
-                                                    .setTitleText("Oops...")
-                                                    .setContentText("Something went wrong! \n Please Re-Login!")
-                                                    .show();
-                                            Log.d("Tag", e.getMessage());
-                                            dialog.dismiss();
-                                            pbUploadImage.setVisibility(View.INVISIBLE);
-                                        });
+
+                                userRef = FirebaseDatabase.getInstance().getReference(Common.USER_REF)
+                                        .child(firebaseUser.getUid());
+                                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.exists()) {
+                                            UserModel checkUserModel = dataSnapshot.getValue(UserModel.class);
+
+                                            if (!checkUserModel.getPassword().equals(oldPassword)) {
+                                                new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                                        .setTitleText("Old Password Incorrect!")
+                                                        .show();
+                                                etResetPasswordOld.requestFocus();
+                                            } else {
+                                                AuthCredential credential = EmailAuthProvider.getCredential(checkUserModel.getEmail(),
+                                                        checkUserModel.getPassword());
+                                                firebaseUser.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()){
+                                                            dialog.dismiss();
+                                                            updatePasswordUser(newPassword);
+                                                        }
+                                                        else {
+                                                            new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                                                    .setTitleText("Oops...")
+                                                                    .setContentText("Something went wrong!")
+                                                                    .show();
+                                                            dialog.dismiss();
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                                .setTitleText("Oops...")
+                                                .setContentText("Something went wrong!")
+                                                .show();
+                                        dialog.dismiss();
+                                    }
+                                });
+
                             }
                         }
                     }
@@ -394,6 +427,56 @@ public class ProfileActivity extends AppCompatActivity {
             });
             dialog.show();
         }
+    }
+
+    private void updatePasswordUser(String newPassword) {
+        sweetAlertDialogLoading = new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.PROGRESS_TYPE);
+        sweetAlertDialogLoading.getProgressHelper().setBarColor(getResources().getColor(R.color.colorPrimary));
+        sweetAlertDialogLoading.setTitleText("Waiting...");
+        sweetAlertDialogLoading.setCancelable(false);
+        sweetAlertDialogLoading.show();
+
+        firebaseUser.updatePassword(newPassword)
+                .addOnSuccessListener(aVoid -> {
+
+                    Map<String, Object> updateUser = new HashMap<>();
+                    updateUser.put(Common.F_PASS, newPassword);
+
+                    FirebaseDatabase.getInstance().getReference(Common.USER_REF)
+                            .child(firebaseUser.getUid())
+                            .updateChildren(updateUser)
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    sweetAlertDialogLoading.dismissWithAnimation();
+                                    new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                            .setTitleText("Oops...")
+                                            .setContentText("Something went wrong!")
+                                            .show();
+                                    pbUploadImage.setVisibility(View.INVISIBLE);
+                                }
+                            })
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    sweetAlertDialogLoading.dismissWithAnimation();
+                                    new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.SUCCESS_TYPE)
+                                            .setTitleText("Success")
+                                            .setContentText("Password Reset Successfully!")
+                                            .show();
+                                    pbUploadImage.setVisibility(View.INVISIBLE);
+                                }
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    sweetAlertDialogLoading.dismissWithAnimation();
+                    new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText("Oops...")
+                            .setContentText("Something went wrong!")
+                            .show();
+                    Log.d("Tag", e.getMessage());
+                    pbUploadImage.setVisibility(View.INVISIBLE);
+                });
     }
 
     private boolean checkNewPassword(boolean check, String oldPassword, String newPassword) {
@@ -438,39 +521,236 @@ public class ProfileActivity extends AppCompatActivity {
     }
     // ---------------------------------------------------------------------------------------------
 
-    @OnClick(R.id.btnSignOut)
-    void signOut() {
+    @OnClick(R.id.btnChangeEmail)
+    void changeEmail() {
 
-        new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
-                .setTitleText("Change Account")
-                .setContentText("Do you really want to change account?")
-                .setCustomImage(R.drawable.ic_account_circle_black_24dp)
-                .setConfirmText("Yes")
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismissWithAnimation();
-                        // Clear Model
-                        Common.currentUser = null;
-                        Common.storeItemsSelected = null;
-                        Common.selectedItems = null;
-                        // Sign Out
-                        firebaseAuth.signOut();
-                        Intent i = new Intent(ProfileActivity.this, LoginActivity.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(i);
-                        finish();
-                    }
-                })
-                .setCancelText("No")
-                .showCancelButton(true)
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismissWithAnimation();
-                    }
-                })
-                .show();
+        if (!firebaseUser.isEmailVerified()) {
+            pbUploadImage.setVisibility(View.INVISIBLE);
+
+            new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("Email is not Verified!")
+                    .setContentText("Please verified your account, before change the email!")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismissWithAnimation();
+                        }
+                    })
+                    .show();
+
+        } else {
+            new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
+                    .setCustomImage(getResources().getDrawable(R.drawable.ic_email_blue_24dp))
+                    .setTitleText("Change Email")
+                    .setContentText("Do you really want to change Email?")
+                    .setConfirmText("Yes")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismissWithAnimation();
+
+                            View view = LayoutInflater.from(ProfileActivity.this).inflate(R.layout.layout_change_email, null);
+
+                            etEmail = view.findViewById(R.id.etEmail);
+                            etPass = view.findViewById(R.id.etPassword);
+                            btnCancel = view.findViewById(R.id.btnCancel);
+                            btnConfirm = view.findViewById(R.id.btnConfirm);
+
+                            builder = new AlertDialog.Builder(ProfileActivity.this)
+                                    .setCancelable(false)
+                                    .setView(view)
+                                    .setTitle("Change Email");
+                            dialog = builder.create();
+                            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                                @Override
+                                public void onShow(DialogInterface dialog) {
+                                    btnCancel.setOnClickListener(v -> {
+                                        dialog.dismiss();
+                                    });
+                                    btnConfirm.setOnClickListener(v -> {
+
+                                        String newEmail, oldEmail, pass;
+                                        oldEmail = tvEmail.getText().toString();
+                                        newEmail = etEmail.getText().toString();
+                                        pass = etPass.getText().toString();
+
+                                        if (checkChangeEmail(true, newEmail, pass)) {
+                                            if (newEmail.equals(oldEmail)) {
+                                                new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                                        .setTitleText("Check your email!")
+                                                        .setContentText("The same Email as the old one!")
+                                                        .show();
+                                                etEmail.requestFocus();
+                                            } else {
+                                                FirebaseDatabase.getInstance().getReference(Common.USER_REF).child(firebaseUser.getUid())
+                                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                                if (dataSnapshot.exists()) {
+                                                                    UserModel userModel = dataSnapshot.getValue(UserModel.class);
+                                                                    if (!pass.equals(userModel.getPassword())) {
+                                                                        new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                                                                .setTitleText("Password wrong!")
+                                                                                .show();
+                                                                        etPass.requestFocus();
+                                                                    } else {
+                                                                        AuthCredential credential = EmailAuthProvider.getCredential(oldEmail, pass);
+                                                                        firebaseUser.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                            @Override
+                                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                                if (task.isSuccessful()) {
+                                                                                    updateEmailUser(newEmail);
+                                                                                    dialog.dismiss();
+                                                                                }
+                                                                                else {
+                                                                                    dialog.dismiss();
+                                                                                    new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                                                                            .setTitleText("Oops...")
+                                                                                            .setContentText("Something went wrong!")
+                                                                                            .show();
+                                                                                }
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                                dialog.dismiss();
+                                                                new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                                                        .setTitleText("Oops...")
+                                                                        .setContentText("Something went wrong!")
+                                                                        .show();
+                                                            }
+                                                        });
+                                            }
+                                        }
+
+
+                                    });
+                                }
+                            });
+
+                            dialog.show();
+                            title = dialog.findViewById(getResources().getIdentifier("alertTitle", "id", "android"));
+                            title.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                        }
+                    })
+                    .setCancelText("No")
+                    .showCancelButton(true)
+                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismissWithAnimation();
+                        }
+                    })
+                    .show();
+        }
+
+    }
+
+    private void updateEmailUser(String newEmail) {
+        sweetAlertDialogLoading = new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.PROGRESS_TYPE);
+        sweetAlertDialogLoading.getProgressHelper().setBarColor(getResources().getColor(R.color.colorPrimary));
+        sweetAlertDialogLoading.setTitleText("Waiting...");
+        sweetAlertDialogLoading.setCancelable(false);
+        sweetAlertDialogLoading.show();
+
+        firebaseUser.updateEmail(newEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Map<String, Object> updateEmail = new HashMap<>();
+                    updateEmail.put(Common.F_EMAIL, newEmail);
+
+                    FirebaseDatabase.getInstance().getReference(Common.USER_REF)
+                            .child(firebaseUser.getUid())
+                            .updateChildren(updateEmail)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.SUCCESS_TYPE)
+                                            .setTitleText("Success")
+                                            .setContentText("Email Successfully Changed!")
+                                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                @Override
+                                                public void onClick(SweetAlertDialog sw) {
+                                                    sweetAlertDialogLoading.dismissWithAnimation();
+                                                    sw.setTitleText("Email has Changed!")
+                                                            .setContentText("Re-login, Please Continue!")
+                                                            .setConfirmText("Confirm")
+                                                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                                @Override
+                                                                public void onClick(SweetAlertDialog sw) {
+                                                                    sw.dismissWithAnimation();
+                                                                    // Clear Model
+                                                                    Common.currentUser = null;
+                                                                    Common.storeItemsSelected = null;
+                                                                    Common.selectedItems = null;
+                                                                    firebaseAuth.signOut();
+                                                                    firebaseUser.sendEmailVerification();
+                                                                    Intent i = new Intent(ProfileActivity.this, LoginActivity.class);
+                                                                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                                    startActivity(i);
+                                                                    finish();
+                                                                }
+                                                            })
+                                                            .changeAlertType(SweetAlertDialog.NORMAL_TYPE);
+                                                }
+                                            })
+                                            .show();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    sweetAlertDialogLoading.dismissWithAnimation();
+                                    new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                            .setTitleText("Oops...")
+                                            .setContentText("Something went wrong!")
+                                            .show();
+                                }
+                            });
+                } else {
+                    sweetAlertDialogLoading.dismissWithAnimation();
+                    new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText("Oops...")
+                            .setContentText("Something went wrong! \nPlease Re-login.")
+                            .show();
+                }
+            }
+        });
+    }
+
+    private boolean checkChangeEmail(boolean check, String email, String pass) {
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            check = false;
+            etEmail.setError("Email is not valid!");
+        }
+        if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            etEmail.setError(null);
+        }
+
+        if (TextUtils.isEmpty(email) || email.equals("")) {
+            check = false;
+            etEmail.setError("Email is not valid!");
+        }
+        if (!TextUtils.isEmpty(email) || !email.equals("")) {
+            etEmail.setError(null);
+        }
+
+        if (pass.length() < 6) {
+            check = false;
+            new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("Password is Empty!")
+                    .setContentText("Please confirm the password!")
+                    .show();
+        }
+        if (pass.length() >= 6) {
+            //
+        }
+        return check;
     }
 
     @Override
@@ -483,6 +763,8 @@ public class ProfileActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+
+        initSweetAlertDialog();
 
         shimmerLayout.startShimmerAnimation();
 
@@ -501,7 +783,6 @@ public class ProfileActivity extends AppCompatActivity {
                         Picasso.get().load(uri).into(imgPhoto);
                     });
         }
-
         // Set Data Profile
         userRef.child(userId)
                 .addValueEventListener(new ValueEventListener() {
@@ -530,18 +811,19 @@ public class ProfileActivity extends AppCompatActivity {
                         Log.d("userRef", databaseError.getMessage());
                     }
                 });
-        
-        if (!firebaseUser.isEmailVerified()){
+
+        if (!firebaseUser.isEmailVerified()) {
             tvNotifVerified.setVisibility(View.VISIBLE);
             tvVerify.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             tvNotifVerified.setVisibility(View.GONE);
             tvVerify.setVisibility(View.GONE);
         }
+
     }
-    
+
     @OnClick(R.id.tvVerify)
-    void onVerifyEmail(){
+    void onVerifyEmail() {
 
         new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
                 .setTitleText("Email Verification")
