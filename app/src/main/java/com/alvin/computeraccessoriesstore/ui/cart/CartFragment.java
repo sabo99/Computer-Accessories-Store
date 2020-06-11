@@ -229,10 +229,9 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
 
                     @Override
                     public void onError(Throwable e) {
-                        if (e.getMessage().contains("Query returned empty")){
+                        if (e.getMessage().contains("Query returned empty")) {
                             txt_empty_cart.setVisibility(View.VISIBLE);
-                        }
-                        else
+                        } else
                             Toast.makeText(getContext(), "" + e.getMessage(), Toast.LENGTH_SHORT).show();
 
                     }
@@ -462,10 +461,13 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
 
                                             @Override
                                             public void onError(Throwable e) {
-                                                new SweetAlertDialog(getContext(), SweetAlertDialog.ERROR_TYPE)
-                                                        .setTitleText("Oops...")
-                                                        .setContentText("Something went wrong!")
-                                                        .show();
+                                                if (e.getMessage().contains("Query returned empty")) {
+                                                    // Nothing
+                                                } else
+                                                    new SweetAlertDialog(getContext(), SweetAlertDialog.ERROR_TYPE)
+                                                            .setTitleText("Oops...")
+                                                            .setContentText("Something went wrong!")
+                                                            .show();
                                             }
                                         });
                             }));
@@ -531,10 +533,7 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
 
     @Override
     public void onLoadTimeFailed(String message) {
-        new SweetAlertDialog(getContext(), SweetAlertDialog.ERROR_TYPE)
-                .setTitleText("Oops...")
-                .setContentText("Something went wrong!")
-                .show();
+        Log.d("onLoadTimeFailed", message);
     }
 
     private void writeOrderToFirebase(Order order) {
@@ -578,10 +577,14 @@ public class CartFragment extends Fragment implements ILoadTimeFromFirebaseListe
 
                                 @Override
                                 public void onError(Throwable e) {
-                                    new SweetAlertDialog(getContext(), SweetAlertDialog.ERROR_TYPE)
-                                            .setTitleText("Oops...")
-                                            .setContentText("Something went wrong!")
-                                            .show();
+                                    if (e.getMessage().contains("Query returned empty")) {
+                                        // Nothing
+                                    } else
+                                        new SweetAlertDialog(getContext(), SweetAlertDialog.ERROR_TYPE)
+                                                .setTitleText("Oops...")
+                                                .setContentText("Something went wrong!")
+                                                .show();
+
                                 }
                             });
                 });
