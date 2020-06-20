@@ -153,6 +153,7 @@ public class ProfileActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 imageUri = result.getUri();
                 uploadImageToFirebase(imageUri);
+                sweetAlertDialogLoading.setTitleText("Uploading...");
                 sweetAlertDialogLoading.show();
             } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception e = result.getError();
@@ -170,7 +171,6 @@ public class ProfileActivity extends AppCompatActivity {
     private void initSweetAlertDialog() {
         sweetAlertDialogLoading = new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.PROGRESS_TYPE);
         sweetAlertDialogLoading.getProgressHelper().setBarColor(getResources().getColor(R.color.colorPrimary));
-        sweetAlertDialogLoading.setTitleText("Uploading...");
         sweetAlertDialogLoading.setCancelable(false);
     }
 
@@ -290,7 +290,8 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void updateUserProfile(Map<String, Object> updateData) {
-        userRef.child(firebaseUser.getUid())
+        FirebaseDatabase.getInstance().getReference(Common.USER_REF)
+                .child(firebaseUser.getUid())
                 .updateChildren(updateData)
                 .addOnFailureListener(e -> {
                     pbUploadImage.setVisibility(View.INVISIBLE);
@@ -430,10 +431,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void updatePasswordUser(String newPassword) {
-        sweetAlertDialogLoading = new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.PROGRESS_TYPE);
-        sweetAlertDialogLoading.getProgressHelper().setBarColor(getResources().getColor(R.color.colorPrimary));
         sweetAlertDialogLoading.setTitleText("Waiting...");
-        sweetAlertDialogLoading.setCancelable(false);
         sweetAlertDialogLoading.show();
 
         firebaseUser.updatePassword(newPassword)
@@ -448,7 +446,7 @@ public class ProfileActivity extends AppCompatActivity {
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    sweetAlertDialogLoading.dismissWithAnimation();
+                                    sweetAlertDialogLoading.dismiss();
                                     new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.ERROR_TYPE)
                                             .setTitleText("Oops...")
                                             .setContentText("Something went wrong!")
@@ -463,13 +461,20 @@ public class ProfileActivity extends AppCompatActivity {
                                     new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.SUCCESS_TYPE)
                                             .setTitleText("Success")
                                             .setContentText("Password Reset Successfully!")
+                                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                @Override
+                                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                                    sweetAlertDialog.dismiss();
+                                                }
+                                            })
                                             .show();
                                     pbUploadImage.setVisibility(View.INVISIBLE);
                                 }
                             });
+
                 })
                 .addOnFailureListener(e -> {
-                    sweetAlertDialogLoading.dismissWithAnimation();
+                    sweetAlertDialogLoading.dismiss();
                     new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
                             .setContentText("Something went wrong!")
@@ -651,10 +656,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void updateEmailUser(String newEmail) {
-        sweetAlertDialogLoading = new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.PROGRESS_TYPE);
-        sweetAlertDialogLoading.getProgressHelper().setBarColor(getResources().getColor(R.color.colorPrimary));
         sweetAlertDialogLoading.setTitleText("Waiting...");
-        sweetAlertDialogLoading.setCancelable(false);
         sweetAlertDialogLoading.show();
 
         firebaseUser.updateEmail(newEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -676,7 +678,7 @@ public class ProfileActivity extends AppCompatActivity {
                                             .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                                 @Override
                                                 public void onClick(SweetAlertDialog sw) {
-                                                    sweetAlertDialogLoading.dismissWithAnimation();
+                                                    sweetAlertDialogLoading.dismiss();
                                                     sw.setTitleText("Email has Changed!")
                                                             .setContentText("Re-login, Please Continue!")
                                                             .setConfirmText("Confirm")
@@ -684,6 +686,7 @@ public class ProfileActivity extends AppCompatActivity {
                                                                 @Override
                                                                 public void onClick(SweetAlertDialog sw) {
                                                                     sw.dismissWithAnimation();
+                                                                    sweetAlertDialogLoading.dismiss();
                                                                     // Clear Model
                                                                     Common.currentUser = null;
                                                                     Common.storeItemsSelected = null;
@@ -705,7 +708,7 @@ public class ProfileActivity extends AppCompatActivity {
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    sweetAlertDialogLoading.dismissWithAnimation();
+                                    sweetAlertDialogLoading.dismiss();
                                     new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.ERROR_TYPE)
                                             .setTitleText("Oops...")
                                             .setContentText("Something went wrong!")
@@ -713,7 +716,7 @@ public class ProfileActivity extends AppCompatActivity {
                                 }
                             });
                 } else {
-                    sweetAlertDialogLoading.dismissWithAnimation();
+                    sweetAlertDialogLoading.dismiss();
                     new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
                             .setContentText("Something went wrong! \nPlease Re-login.")

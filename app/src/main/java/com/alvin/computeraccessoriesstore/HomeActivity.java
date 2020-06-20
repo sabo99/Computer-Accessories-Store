@@ -127,14 +127,6 @@ public class HomeActivity extends AppCompatActivity {
 
         initViewUser(navigationView, toolbar);
         initCartBadge(toolbar);
-        initLoadingDialog();
-    }
-
-    private void initLoadingDialog() {
-        sweetAlertDialog = new SweetAlertDialog(HomeActivity.this, SweetAlertDialog.PROGRESS_TYPE);
-        sweetAlertDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.colorPrimary));
-        sweetAlertDialog.setTitleText("Loading");
-        sweetAlertDialog.setCancelable(false);
     }
 
     private void initCartBadge(Toolbar toolbar) {
@@ -317,6 +309,7 @@ public class HomeActivity extends AppCompatActivity {
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 UserModel userModel = dataSnapshot.getValue(UserModel.class);
                                 sweetAlertDialogLogin.dismissWithAnimation();
+                                sweetAlertDialogLogin.dismiss();
                                 new SweetAlertDialog(HomeActivity.this)
                                         .setTitleText("Welcome back!")
                                         .setContentText(
@@ -328,6 +321,7 @@ public class HomeActivity extends AppCompatActivity {
                                             @Override
                                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                                 sweetAlertDialog.dismissWithAnimation();
+                                                sweetAlertDialog.dismiss();
                                             }
                                         })
                                         .show();
@@ -350,6 +344,12 @@ public class HomeActivity extends AppCompatActivity {
                 new SweetAlertDialog(HomeActivity.this)
                         .setTitleText("Success Login")
                         .setContentText("Logged in Successfully!")
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
+                            }
+                        })
                         .show();
             }
         }
