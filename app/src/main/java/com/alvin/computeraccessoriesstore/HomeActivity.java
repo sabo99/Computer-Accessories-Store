@@ -3,6 +3,7 @@ package com.alvin.computeraccessoriesstore;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -29,7 +30,11 @@ import com.alvin.computeraccessoriesstore.RoomDB.CartDataSource;
 import com.alvin.computeraccessoriesstore.RoomDB.CartDatabase;
 import com.alvin.computeraccessoriesstore.RoomDB.LocalCartDataSource;
 import com.andremion.counterfab.CounterFab;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -81,7 +86,7 @@ public class HomeActivity extends AppCompatActivity {
     private DrawerLayout drawer;
     private NavigationView navigationView;
     private NavController navController;
-    SweetAlertDialog sweetAlertDialog, sweetAlertDialogLogin;
+    private SweetAlertDialog sweetAlertDialog, sweetAlertDialogLogin;
     private CartDataSource cartDataSource;
 
     CircleImageView imgPhotoHeader;
@@ -127,6 +132,17 @@ public class HomeActivity extends AppCompatActivity {
 
         initViewUser(navigationView, toolbar);
         initCartBadge(toolbar);
+        initSweetAlertDialog();
+    }
+
+    private void initSweetAlertDialog() {
+        sweetAlertDialog = new SweetAlertDialog(HomeActivity.this, SweetAlertDialog.PROGRESS_TYPE);
+        sweetAlertDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.colorPrimary));
+        sweetAlertDialog.setTitleText("Loading").setCancelable(false);
+
+        sweetAlertDialogLogin = new SweetAlertDialog(HomeActivity.this, SweetAlertDialog.PROGRESS_TYPE);
+        sweetAlertDialogLogin.getProgressHelper().setBarColor(getResources().getColor(R.color.colorPrimary));
+        sweetAlertDialogLogin.setTitleText("Loading").setCancelable(false);
     }
 
     private void initCartBadge(Toolbar toolbar) {
@@ -267,7 +283,9 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        EventBus.getDefault().unregister(this);
+        if (EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().unregister(this);
+
         EventBus.getDefault().removeStickyEvent(StoreItemClick.class);
         EventBus.getDefault().removeStickyEvent(ItemsDetailClick.class);
         EventBus.getDefault().removeStickyEvent(SweetAlertDialogLogin.class);
@@ -299,43 +317,26 @@ public class HomeActivity extends AppCompatActivity {
     public void onSuccessLogin(SweetAlertDialogLogin event) {
         if (event.isSuccessAutoLogin()) {
             if (firebaseUser != null) {
-                sweetAlertDialogLogin = new SweetAlertDialog(HomeActivity.this, SweetAlertDialog.PROGRESS_TYPE);
-                sweetAlertDialogLogin.getProgressHelper().setBarColor(getResources().getColor(R.color.colorPrimary));
-                sweetAlertDialogLogin.setTitleText("Loading").setCancelable(false);
                 sweetAlertDialogLogin.show();
-                userRef.child(firebaseUser.getUid())
-                        .addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                UserModel userModel = dataSnapshot.getValue(UserModel.class);
-                                sweetAlertDialogLogin.dismissWithAnimation();
-                                sweetAlertDialogLogin.dismiss();
-                                new SweetAlertDialog(HomeActivity.this)
-                                        .setTitleText("Welcome back!")
-                                        .setContentText(
 
-                                                String.valueOf(new StringBuilder("Hello, ")
-                                                        .append(userModel.getName()))
-                                        )
-                                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                            @Override
-                                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                                sweetAlertDialog.dismissWithAnimation();
-                                                sweetAlertDialog.dismiss();
-                                            }
-                                        })
-                                        .show();
-                            }
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        sweetAlertDialogLogin.dismissWithAnimation();
+                        new SweetAlertDialog(HomeActivity.this)
+                                .setTitleText("Hello!")
+                                .setContentText("Welcome back")
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        sweetAlertDialog.dismissWithAnimation();
+                                    }
+                                })
+                                .show();
+                    }
+                }, 1500);
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                                sweetAlertDialogLogin.dismissWithAnimation();
-                                new SweetAlertDialog(HomeActivity.this, SweetAlertDialog.ERROR_TYPE)
-                                        .setTitleText("Oops...")
-                                        .setContentText("Something went wrong!")
-                                        .show();
-                            }
-                        });
+
             }
         }
 
@@ -389,8 +390,7 @@ public class HomeActivity extends AppCompatActivity {
                     public void onError(Throwable e) {
                         if (!e.getMessage().contains("Query returned empty")) {
                             //Toast.makeText(HomeActivity.this, "[COUNT CART]" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                        else {
+                        } else {
                             fab.setCount(0);
                             badge.setVisibility(View.INVISIBLE);
                             badge.setText(null);
