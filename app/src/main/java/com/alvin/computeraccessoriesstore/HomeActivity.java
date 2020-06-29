@@ -323,16 +323,32 @@ public class HomeActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         sweetAlertDialogLogin.dismissWithAnimation();
-                        new SweetAlertDialog(HomeActivity.this)
-                                .setTitleText("Hello!")
-                                .setContentText("Welcome back")
-                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+
+                        FirebaseDatabase.getInstance().getReference(Common.USER_REF)
+                                .child(firebaseUser.getUid())
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
-                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                        sweetAlertDialog.dismissWithAnimation();
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        UserModel userModel = dataSnapshot.getValue(UserModel.class);
+                                        new SweetAlertDialog(HomeActivity.this)
+                                                .setTitleText("Welcome back!")
+                                                .setContentText(String.valueOf(new StringBuilder("Hello, ")
+                                                        .append(userModel.getName())))
+                                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                    @Override
+                                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                                        sweetAlertDialog.dismissWithAnimation();
+                                                    }
+                                                })
+                                                .show();
                                     }
-                                })
-                                .show();
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
                     }
                 }, 1500);
 
