@@ -2,4 +2,5 @@
 Sabo Store, contoh aplikasi pembelian barang-barang aksesories (Gear) komputer
 
 Database : Firebase
-\nUser Login : - Email/Password
+
+User Login : - Email/Password
