@@ -1,2 +1,2 @@
 # Computer-Accessories-Store
-Sabo Store, contoh aplikasi pembelian barang-barang akesories komputer
+Sabo Store, contoh aplikasi pembelian barang-barang aksesories (Gear) komputer
