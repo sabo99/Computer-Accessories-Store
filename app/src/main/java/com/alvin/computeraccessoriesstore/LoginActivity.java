@@ -1,5 +1,6 @@
 package com.alvin.computeraccessoriesstore;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -17,14 +18,23 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.alvin.computeraccessoriesstore.Common.Common;
 import com.alvin.computeraccessoriesstore.EventBus.SweetAlertDialogLogin;
+import com.alvin.computeraccessoriesstore.Model.UserModel;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.ontbee.legacyforks.cn.pedant.SweetAlert.SweetAlertDialog;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -144,16 +154,11 @@ public class LoginActivity extends AppCompatActivity {
             if (checkPattern(true, email, password)) {
 
                 pbSignIn.setVisibility(View.VISIBLE);
-
                 firebaseAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(task -> {
 
                             if (task.isSuccessful()) {
-                                pbSignIn.setVisibility(View.INVISIBLE);
-                                initClear();
-                                EventBus.getDefault().postSticky(new SweetAlertDialogLogin(true, false));
-                                startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                                finish();
+                                checkStatus();
                             } else {
                                 pbSignIn.setVisibility(View.INVISIBLE);
                                 new SweetAlertDialog(LoginActivity.this, SweetAlertDialog.WARNING_TYPE)
@@ -170,6 +175,59 @@ public class LoginActivity extends AppCompatActivity {
                         });
             }
         }
+    }
+
+    private void checkStatus() {
+        firebaseUser = firebaseAuth.getCurrentUser();
+        FirebaseDatabase.getInstance().getReference(Common.USER_REF).child(firebaseUser.getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            UserModel userModel = dataSnapshot.getValue(UserModel.class);
+                            if (userModel.getStatus().equals("on")){
+                                pbSignIn.setVisibility(View.INVISIBLE);
+                                new SweetAlertDialog(LoginActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                        .setTitleText("Oops!")
+                                        .setContentText("User already login.")
+                                        .show();
+                                firebaseAuth.signOut();
+                                firebaseUser = null;
+                            }
+
+                            if (userModel.getStatus().equals("off")){
+                                updateStatusSignIn();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        pbSignIn.setVisibility(View.INVISIBLE);
+                    }
+                });
+    }
+
+    private void updateStatusSignIn() {
+        firebaseUser = firebaseAuth.getCurrentUser();
+        Map<String, Object> updateStatus = new HashMap<>();
+        updateStatus.put(Common.F_STATUS, "on");
+
+        FirebaseDatabase.getInstance().getReference(Common.USER_REF)
+                .child(firebaseUser.getUid())
+                .updateChildren(updateStatus)
+                .addOnCompleteListener(task -> {
+                    pbSignIn.setVisibility(View.INVISIBLE);
+                    if (task.isSuccessful()){
+                        initClear();
+                        EventBus.getDefault().postSticky(new SweetAlertDialogLogin(true, false));
+                        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                        finish();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    pbSignIn.setVisibility(View.INVISIBLE);
+                });
     }
 
     private boolean checkPattern(boolean check, String email, String password) {
@@ -272,7 +330,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if (firebaseUser!= null) {
+        if (firebaseUser != null) {
             EventBus.getDefault().postSticky(new SweetAlertDialogLogin(false, true));
             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
             finish();

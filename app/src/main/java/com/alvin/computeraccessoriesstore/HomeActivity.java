@@ -19,6 +19,7 @@ import com.alvin.computeraccessoriesstore.EventBus.HideBadgeCart;
 import com.alvin.computeraccessoriesstore.EventBus.HideCivProfile;
 import com.alvin.computeraccessoriesstore.EventBus.HideFABCart;
 import com.alvin.computeraccessoriesstore.EventBus.ItemsDetailClick;
+import com.alvin.computeraccessoriesstore.EventBus.NoInet;
 import com.alvin.computeraccessoriesstore.EventBus.PopularSliderItemClick;
 import com.alvin.computeraccessoriesstore.EventBus.StoreItemClick;
 import com.alvin.computeraccessoriesstore.EventBus.SweetAlertDialogLogin;
@@ -33,8 +34,6 @@ import com.andremion.counterfab.CounterFab;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -57,14 +56,15 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -243,7 +243,29 @@ public class HomeActivity extends AppCompatActivity {
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        updateStatusSignOut(sweetAlertDialog);
+                    }
+                })
+                .setCancelText("No")
+                .showCancelButton(true)
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismissWithAnimation();
+                    }
+                })
+                .show();
+    }
+
+    private void updateStatusSignOut(SweetAlertDialog sweetAlertDialog) {
+        Map<String, Object> updateStatus = new HashMap<>();
+        updateStatus.put(Common.F_STATUS, "off");
+        FirebaseDatabase.getInstance().getReference(Common.USER_REF)
+                .child(firebaseUser.getUid())
+                .updateChildren(updateStatus)
+                .addOnCompleteListener(task -> {
+                    sweetAlertDialog.dismissWithAnimation();
+                    if (task.isSuccessful()) {
                         // Clear Model
                         Common.currentUser = null;
                         Common.storeItemsSelected = null;
@@ -256,15 +278,10 @@ public class HomeActivity extends AppCompatActivity {
                         finish();
                     }
                 })
-                .setCancelText("No")
-                .showCancelButton(true)
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismissWithAnimation();
-                    }
-                })
-                .show();
+                .addOnFailureListener(e -> {
+                    sweetAlertDialog.dismissWithAnimation();
+                });
+
     }
 
     @Override
@@ -552,5 +569,11 @@ public class HomeActivity extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void NoInternet(NoInet event){
+        if (!event.isConnected())
+            pbHeader.setVisibility(View.GONE);
     }
 }

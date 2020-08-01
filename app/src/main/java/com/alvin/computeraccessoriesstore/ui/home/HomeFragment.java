@@ -1,8 +1,12 @@
 package com.alvin.computeraccessoriesstore.ui.home;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +23,14 @@ import com.alvin.computeraccessoriesstore.Adapter.StoreAdapter;
 import com.alvin.computeraccessoriesstore.EventBus.HideBadgeCart;
 import com.alvin.computeraccessoriesstore.EventBus.HideCivProfile;
 import com.alvin.computeraccessoriesstore.EventBus.HideFABCart;
+import com.alvin.computeraccessoriesstore.EventBus.NoInet;
 import com.alvin.computeraccessoriesstore.R;
 import com.alvin.computeraccessoriesstore.SearchActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.ontbee.legacyforks.cn.pedant.SweetAlert.SweetAlertDialog;
 import com.smarteist.autoimageslider.IndicatorAnimations;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
@@ -95,6 +101,37 @@ public class HomeFragment extends Fragment {
         return root;
     }
 
+    private void checkConnection(boolean onResume, boolean onStop) {
+        if (onResume){
+            try {
+                ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+
+                if (networkInfo != null && networkInfo.isConnected())
+                    return;
+                else {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressBar1.setVisibility(View.GONE);
+                            progressBar2.setVisibility(View.GONE);
+                            EventBus.getDefault().postSticky(new NoInet(false));
+                            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                                    .setTitleText("No Connection!")
+                                    .setContentText("Your device has no connection")
+                                    .show();
+                        }
+                    }, 5000);
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        if (onStop){
+            // Nothing
+        }
+    }
+
     private void initViews() {
 
         setHasOptionsMenu(true);
@@ -126,5 +163,13 @@ public class HomeFragment extends Fragment {
         EventBus.getDefault().postSticky(new HideFABCart(false));
         EventBus.getDefault().postSticky(new HideBadgeCart(true));
         EventBus.getDefault().postSticky(new HideCivProfile(false));
+
+        checkConnection(true, false);
+    }
+
+    @Override
+    public void onStop() {
+        checkConnection(false, true);
+        super.onStop();
     }
 }

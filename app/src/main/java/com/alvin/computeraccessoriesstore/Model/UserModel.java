@@ -1,10 +1,8 @@
 package com.alvin.computeraccessoriesstore.Model;
 
 public class UserModel {
-    private String name, email, phone, gender, uid, password;
+    private String name, email, phone, gender, uid, password, status;
 
-    public UserModel() {
-    }
 
     public String getUid() {
         return uid;
@@ -52,5 +50,13 @@ public class UserModel {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

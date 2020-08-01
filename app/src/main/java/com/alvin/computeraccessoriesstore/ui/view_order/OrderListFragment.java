@@ -23,6 +23,7 @@ import com.alvin.computeraccessoriesstore.Common.ILoadOrderCallbackListener;
 import com.alvin.computeraccessoriesstore.EventBus.HideBadgeCart;
 import com.alvin.computeraccessoriesstore.EventBus.HideCivProfile;
 import com.alvin.computeraccessoriesstore.EventBus.HideFABCart;
+import com.alvin.computeraccessoriesstore.EventBus.NoInet;
 import com.alvin.computeraccessoriesstore.EventBus.RefreshViewOrder;
 import com.alvin.computeraccessoriesstore.Model.Order;
 import com.alvin.computeraccessoriesstore.R;
@@ -166,5 +167,11 @@ public class OrderListFragment extends Fragment implements ILoadOrderCallbackLis
         if (event.isRefresh()){
             loadOrderFromFirebase();
         }
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void NoInternet(NoInet event){
+        if (!event.isConnected())
+            progressBar.setVisibility(View.GONE);
     }
 }

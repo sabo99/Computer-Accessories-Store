@@ -6,10 +6,6 @@ public class StoreModel {
     private String name, image, item_id;
     List<ItemsModel> items;
 
-    public StoreModel() {
-    }
-
-
     public String getName() {
         return name;
     }

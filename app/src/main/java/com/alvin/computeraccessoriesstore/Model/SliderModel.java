@@ -3,8 +3,6 @@ package com.alvin.computeraccessoriesstore.Model;
 public class SliderModel {
     private String image, description, item_id, id;
 
-    public SliderModel() {
-    }
 
     public String getImage() {
         return image;

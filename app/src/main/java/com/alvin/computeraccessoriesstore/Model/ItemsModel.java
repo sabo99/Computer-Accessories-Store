@@ -4,9 +4,6 @@ public class ItemsModel {
     private String id, name, image, description, specification, key;
     private int price;
 
-    public ItemsModel() {
-    }
-
     public String getKey() {
         return key;
     }

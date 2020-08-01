@@ -11,9 +11,6 @@ public class Order {
     private long createDate;
     List<CartItem> cartItems;
 
-    public Order() {
-    }
-
     public String getName() {
         return name;
     }

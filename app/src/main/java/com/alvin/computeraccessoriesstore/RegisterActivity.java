@@ -114,6 +114,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 userModel.setPhone(phone);
                                 userModel.setGender(gender);
                                 userModel.setPassword(password);
+                                userModel.setStatus("on"); /** Default Status - off */
 
                                 FirebaseDatabase.getInstance()
                                         .getReference(Common.USER_REF)
